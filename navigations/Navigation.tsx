@@ -20,9 +20,9 @@ function Navigation(){
   return(
     <NavigationContainer>
       <dashboard.Navigator initialRouteName="SplashScreen" mode='modal'>
-        {/* <dashboard.Screen
+        <dashboard.Screen
           name='SplashScreen' component={SplashScreen} 
-          options={{ title: 'Splash Screen', headerShown: false}} />  */}
+          options={{ title: 'Splash Screen', headerShown: false}} /> 
 
         <dashboard.Screen
           name='Dashboard' component={Dashboard} 
