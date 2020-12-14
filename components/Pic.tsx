@@ -8,6 +8,8 @@ export default function Main(props : any){
         src,
         touchable,
         press,
+        width,
+        height,
 
         ...rest
     } = props
@@ -15,6 +17,11 @@ export default function Main(props : any){
     const imageStyle = [
         style,
         styles.image,
+
+        height == false && { height : 0},
+        height && {height: height},
+        width == false && { width : 0},
+        width && {width: width},
 
         
     ];
