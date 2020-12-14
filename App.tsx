@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View} from 'react-native';
 import * as Permissions from 'expo-permissions';
-import { Map, SplashScreen } from './screens';
+import { Map, SplashScreen, Dashboard } from './screens';
+import Navigation from './navigations/Navigation';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
 
@@ -26,9 +27,7 @@ export default function Main(){
   
   if(fontsLoaded){
     return(
-    <View style={styles.container}>
-      <SplashScreen/>
-    </View>
+    <Navigation/>
     );
   } else {
     

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState} from 'react';
 import { Animated, StyleSheet} from 'react-native';
 import { Button, Circle, Pic, Text, View } from '../components';
 import { theme } from '../constants';
+import Navigation from '../navigations/Navigation';
 
 const screens = [
     {
@@ -26,11 +27,14 @@ const screens = [
     }
 ]
 
-function Main(props){
+function Main({navigation}){
+    const proceed = () =>{
+        navigation.navigate('Dashboard')
+    }
     const [change, setChange] = useState(false);
     return(
         <View>
-            { change ? <InfoScreen/> : <LogoScreen setChange={setChange}/>}
+            { change ? <InfoScreen navigation={navigation}/> : <LogoScreen setChange={setChange}/>}
         </View>
     )
 }
@@ -73,7 +77,8 @@ function LogoScreen(props){
     )
 }
 
-function InfoScreen(props){
+function InfoScreen({navigation}){
+   
     const [cnt, setCnt] = useState(0);
     const data = screens[cnt];
 
@@ -116,7 +121,7 @@ function InfoScreen(props){
                 <Text size={theme.size.normal + 2} gray open_sans center>{data.info}</Text>
             </View>
             <View center middle flex={1}>
-                {cnt != 3 ? <CircleNav/> :  <Button><Text size={19} white archivo_bold >Get Started</Text></Button> }
+                {cnt != 3 ? <CircleNav/> : <Button onPress={() => navigation.navigate('Dashboard') }><Text size={19} white archivo_bold >Get Started</Text></Button> }
                 
             </View>
         </View>

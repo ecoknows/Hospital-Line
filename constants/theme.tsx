@@ -231,6 +231,8 @@ const font = {
     ARCHIVO_BOLD: 'Archivo-Bold',
 }
 
+
+
 const size = {
     normal : 15,
     title : 36,
