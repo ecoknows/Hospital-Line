@@ -229,6 +229,8 @@ const font = {
     ROBOTO_BOLD: 'Roboto-Bold',
     OPEN_SANS: 'Open-Sans',
     ARCHIVO_BOLD: 'Archivo-Bold',
+    ARIAL_BOLD: 'Arial-Bold',
+    AVARAGE_SANS_REGULAR: 'AverageSans-Regular',
 }
 
 
@@ -239,15 +241,18 @@ const size = {
     padding : 8,
     margin : 4,
 
-}
+};
 
 const color = {
+    semi_black: '#404040',
     gray : '#7A7A7A',
     light_gray: '#8B8B8B',
     light_blue : '#1DA6FD',
     light_accent : '#55BCFD',
     accent : '#1DA6FD',
-}
+};
+
+
 
 export {
     mapStyle,
@@ -256,6 +261,6 @@ export {
     initial_userposition,
     font,
     color,
-    size
+    size,
 }
   
