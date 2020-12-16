@@ -12,6 +12,8 @@ const  getFonts =()=> Font.loadAsync({
   'Roboto-Bold' : require('./assets/fonts/Roboto-Bold.ttf'),
   'Open-Sans' : require('./assets/fonts/OpenSans-Regular.ttf'),
   'Archivo-Bold' : require('./assets/fonts/Archivo-Bold.ttf'),
+  'Arial-Bold' : require('./assets/fonts/arial.ttf'),
+  'AverageSans-Regular' : require('./assets/fonts/AverageSans-Regular.ttf'),
 });
 
 export default function Main(){

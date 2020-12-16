@@ -11,7 +11,8 @@ import {
   Map,
   SplashScreen,
   Dashboard} from '../screens';
-import { Route } from 'react-native';
+import {StyleSheet} from 'react-native';
+import { Pic } from '../components';
 
   
 const dashboard = createStackNavigator();
@@ -19,7 +20,7 @@ const dashboard = createStackNavigator();
 function Navigation(){
   return(
     <NavigationContainer>
-      <dashboard.Navigator initialRouteName="SplashScreen" mode='modal'>
+      <dashboard.Navigator initialRouteName="Dashboard" mode='modal'>
         <dashboard.Screen
           name='SplashScreen' component={SplashScreen} 
           options={{ title: 'Splash Screen', headerShown: false}} /> 
@@ -34,7 +35,26 @@ function Navigation(){
 
         <dashboard.Screen
           name='Appointment' component={Appointment} 
-          options={{ title: 'Appointment'}} />
+          options={({navigation}) => ({
+            title: 'Departments',
+            headerStyle: {
+              backgroundColor: theme.color.light_blue,
+            },
+            headerLeft: ()=>
+            <Pic
+            touchable 
+            press={()=> navigation.goBack()}
+            style={styles.back_icon}
+            src={require('../assets/icons/back.png')}/>,
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontFamily: theme.font.ARIAL_BOLD,
+              fontWeight: 'bold'
+            },
+            headerTitleAlign: 'center'
+          
+          })}
+          />
 
         <dashboard.Screen
           name='HealthTips' component={HealthTips} 
@@ -54,3 +74,10 @@ function Navigation(){
 }
 
  export default Navigation;
+
+ const styles = StyleSheet.create({
+   back_icon: {
+     resizeMode: 'contain',
+     marginLeft: theme.size.margin*3,
+   }
+ })

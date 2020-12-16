@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, Animated, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Animated, TouchableOpacity, ScrollView } from 'react-native';
+import { BoxShadow } from 'react-native-shadow';
 
 export default function Main(props : any){
     
@@ -15,6 +16,12 @@ export default function Main(props : any){
         flexDirection,
         width,
         height,
+        row,
+        shadow,
+        t_style,
+        activeOpacity,
+        white,
+        scroll,
 
         ...rest
     } = props
@@ -36,15 +43,52 @@ export default function Main(props : any){
         height && {height: height},
         width == false && { width : 0},
         width && {width: width},
+        row && {flexDirection: 'row'},
+
+        white && styles.white,
         
         
     ];
+
+    if(scroll){
+        
+        return(
+            <ScrollView showsVerticalScrollIndicator={false}>
+                
+                <View style={viewStyle} {...rest}>
+                    {children}  
+                </View>
+            </ScrollView>
+        );
+    }
+
+
+    if(shadow != undefined){
+        return(
+            <BoxShadow setting={shadow}>
+                <View style={viewStyle} {...rest}>
+                    {children}
+                </View>
+            </BoxShadow>
+        )
+    }
+
+    if(touchable && animated){
+        return(
+            <TouchableOpacity style={t_style} onPress={press} activeOpacity={activeOpacity}>
+                <Animated.View style={viewStyle} {...rest}>
+                    {children}
+                </Animated.View>
+            </TouchableOpacity>
+        )
+    }
+
     if(touchable){
         return(
-            <TouchableOpacity style={viewStyle} onPress={press}>
-            <View>
-                {children}  
-            </View>
+            <TouchableOpacity style={viewStyle} onPress={press} {...rest}>
+                <View>
+                    {children}  
+                </View>
             </TouchableOpacity>
         )
     }
@@ -68,4 +112,5 @@ const styles = StyleSheet.create({
     view: {
         flex: 1,
     },
+    white: {backgroundColor: 'white'}
 });

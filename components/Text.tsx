@@ -18,6 +18,9 @@ export default function Main(props : any){
         center,
         white,
         archivo_bold,
+        arial_bold,
+        avarage_sans,
+        semi_black,
 
         ...rest
     } = props
@@ -30,6 +33,9 @@ export default function Main(props : any){
         robot_bold && styles.robot_bold,
         open_sans && styles.open_sans,
         archivo_bold && styles.archivo_bold,
+        arial_bold && styles.arial_bold,
+        avarage_sans && styles.avarage_sans,
+
         size && {fontSize : size},
 
         center && {textAlign: 'center'},
@@ -40,6 +46,7 @@ export default function Main(props : any){
         light_blue && styles.light_blue,
         light_gray && styles.light_gray,
         gray && styles.gray,
+        semi_black && styles.semi_black,
 
     ];
 
@@ -57,12 +64,14 @@ const styles = StyleSheet.create({
     title: {fontSize: theme.size.title},
     roboto: {fontFamily: theme.font.ROBOTO},
     robot_bold: {fontFamily: theme.font.ROBOTO_BOLD},
+    arial_bold: {fontFamily: theme.font.ARIAL_BOLD},
     open_sans: {fontFamily: theme.font.OPEN_SANS},
+    avarage_sans: {fontFamily: theme.font.AVARAGE_SANS_REGULAR},
     archivo_bold: {fontFamily: theme.font.ARCHIVO_BOLD},
 
     white : {color: 'white'},
     light_blue : {color: theme.color.light_blue},
     gray: {color: theme.color.gray},
     light_gray : {color: theme.color.light_gray},
-    
+    semi_black : {color: theme.color.semi_black},
 });

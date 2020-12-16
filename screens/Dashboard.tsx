@@ -65,7 +65,5 @@ const styles = StyleSheet.create({
   },
   home:{
     alignSelf:'center',
-    
-    
   }
 })
