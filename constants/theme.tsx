@@ -1,3 +1,4 @@
+import { Dimensions } from 'react-native';
 
 const mapStyle=[
     {
@@ -240,6 +241,8 @@ const size = {
     title : 36,
     padding : 8,
     margin : 4,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
 
 };
 
@@ -253,6 +256,19 @@ const color = {
     accent : '#1DA6FD',
 };
 
+const home = {
+    alignSelf:'center',
+    top: -25,
+};
+
+const home_style =  {
+    width: size.width,
+    height: size.height * 0.07,
+    position: 'absolute',
+    bottom: 0,
+    borderTopColor: '#C1C1C1',
+    borderWidth: 0.5
+};
 
 
 export {
@@ -263,5 +279,7 @@ export {
     font,
     color,
     size,
+    home,
+    home_style
 }
   
