@@ -14,13 +14,12 @@ export default function Main(props : any){
     } = props
 
     const buttonStyle = [
-        style,
-        styles.view,
+        style,,
         
     ];
 
     return(
-        <TouchableOpacity style={buttonStyle} {...rest}>
+        <TouchableOpacity style={[styles.view,buttonStyle]} {...rest}>
             {children}
         </TouchableOpacity>
     );

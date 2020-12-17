@@ -5,6 +5,8 @@ import Text from './Text';
 import View from './View';
 import Circle from './Circle';
 import Button from './Button';
+import List from './List';
+import Input from './Input';
 
 export {
     Mark,
@@ -14,4 +16,6 @@ export {
     View,
     Circle,
     Button,
+    List,
+    Input,
 }

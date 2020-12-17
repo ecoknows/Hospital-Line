@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Animated, TouchableOpacity, TouchableHighlight, ScrollView } from 'react-native';
+import { View, StyleSheet, Animated, TouchableOpacity, ScrollView } from 'react-native';
 import { BoxShadow } from 'react-native-shadow';
 
 export default function Main(props : any){
@@ -28,7 +28,6 @@ export default function Main(props : any){
 
     const viewStyle = [
         style,
-        styles.view,
 
         center && {justifyContent: 'center'},
         middle && {alignItems: 'center'},
@@ -55,7 +54,7 @@ export default function Main(props : any){
         return(
             <ScrollView showsVerticalScrollIndicator={false}>
                 
-                <View style={viewStyle} {...rest}>
+                <View style={[styles.view,viewStyle]} {...rest}>
                     {children}  
                 </View>
             </ScrollView>
@@ -63,20 +62,34 @@ export default function Main(props : any){
     }
 
 
-    if(shadow != undefined){
+    if(shadow != undefined && !touchable){
+        
         return(
             <BoxShadow setting={shadow}>
-                <View style={viewStyle} {...rest}>
+                <View style={[styles.view,viewStyle]} {...rest}>
                     {children}
                 </View>
             </BoxShadow>
+        )
+    }
+    
+
+    if(shadow != undefined && touchable){
+        return(
+            <TouchableOpacity style={t_style} onPress={press} activeOpacity={activeOpacity}>
+                <BoxShadow setting={shadow}>
+                        <Animated.View style={[styles.view,viewStyle]} {...rest}>
+                            {children}
+                        </Animated.View>
+                </BoxShadow>
+            </TouchableOpacity>
         )
     }
 
     if(touchable && animated){
         return(
             <TouchableOpacity style={t_style} onPress={press} activeOpacity={activeOpacity}>
-                <Animated.View style={viewStyle} {...rest}>
+                <Animated.View style={[styles.view,viewStyle]} {...rest}>
                     {children}
                 </Animated.View>
             </TouchableOpacity>
@@ -85,7 +98,7 @@ export default function Main(props : any){
 
     if(touchable){
         return(
-            <TouchableOpacity style={viewStyle} onPress={press} {...rest}>
+            <TouchableOpacity style={[styles.view,viewStyle]} onPress={press} {...rest}>
                 <View>
                     {children}  
                 </View>
@@ -95,14 +108,14 @@ export default function Main(props : any){
 
     if(animated){
         return(
-            <Animated.View  style={viewStyle} {...rest}>
+            <Animated.View  style={[styles.view,viewStyle]} {...rest}>
                 {children}
             </Animated.View>
         )
     }
 
     return(
-        <View style={viewStyle} {...rest}>
+        <View style={[styles.view,viewStyle]} {...rest}>
             {children}  
         </View>
     );

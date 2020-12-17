@@ -1,6 +1,5 @@
 import { Dimensions } from 'react-native';
 
-
 const mapStyle=[
     {
         "featureType": "water",
@@ -236,6 +235,7 @@ const font = {
 }
 
 
+
 const size = {
     normal : 15,
     title : 36,
@@ -248,6 +248,7 @@ const size = {
 
 const color = {
     semi_black: '#404040',
+    purple: '#3B58B5',
     gray : '#7A7A7A',
     light_gray: '#8B8B8B',
     light_blue : '#1DA6FD',
@@ -268,7 +269,6 @@ const home_style =  {
     borderTopColor: '#C1C1C1',
     borderWidth: 0.5
 };
-
 
 
 export {

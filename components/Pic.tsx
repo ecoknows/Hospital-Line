@@ -1,5 +1,6 @@
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function Main(props : any){
     
@@ -10,13 +11,13 @@ export default function Main(props : any){
         press,
         width,
         height,
+        t_style,
 
         ...rest
     } = props
 
     const imageStyle = [
         style,
-        styles.image,
 
         height == false && { height : 0},
         height && {height: height},
@@ -27,19 +28,21 @@ export default function Main(props : any){
     ];
     if(touchable){
         return(
-            <TouchableOpacity onPress={press}>
-              <Image style={imageStyle} source={src} {...rest}/>
+            <TouchableOpacity onPress={press} style={[styles.touch,t_style]}>
+              <Image style={[ styles.image, imageStyle]} source={src} {...rest}/>
             </TouchableOpacity>
         )
     }
 
     return(
-        <Image style={imageStyle} source={src} {...rest}/>
+        <Image style={[styles.image, imageStyle]} source={src} {...rest}/>
     );
 }
 
 const styles = StyleSheet.create({
     image: {
         resizeMode: 'contain',
+    },
+    touch:{
     },
 });
