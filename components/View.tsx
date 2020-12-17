@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Animated, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, Animated, TouchableOpacity, TouchableHighlight, ScrollView } from 'react-native';
 import { BoxShadow } from 'react-native-shadow';
 
 export default function Main(props : any){

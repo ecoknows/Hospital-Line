@@ -78,9 +78,9 @@ function Main({navigation}){
 
       </View>
 
-      <View center middle style={styles.home_style}>
+      <View center middle style={[{backgroundColor: 'white', }, theme.home_style]}>
         
-      <Pic src={require('../../assets/images/Home.png')} style={styles.home } touchable press={()=>navigation.goBack()} width={80} />
+      <Pic src={require('../../assets/images/Home.png')} style={theme.home } touchable press={()=>navigation.navigate('Dashboard')} width={80} />
  
       </View>
 

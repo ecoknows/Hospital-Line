@@ -20,7 +20,7 @@ const dashboard = createStackNavigator();
 function Navigation(){
   return(
     <NavigationContainer>
-      <dashboard.Navigator initialRouteName="Dashboard" mode='modal'>
+      <dashboard.Navigator initialRouteName="SplashScreen" mode='modal'>
         <dashboard.Screen
           name='SplashScreen' component={SplashScreen} 
           options={{ title: 'Splash Screen', headerShown: false}} /> 
@@ -42,18 +42,18 @@ function Navigation(){
             },
             headerLeft: ()=>
             <Pic
-            touchable 
-            press={()=> navigation.goBack()}
-            style={styles.back_icon}
-            src={require('../assets/icons/back.png')}/>,
-            headerTintColor: '#fff',
-            headerTitleStyle: {
-              fontFamily: theme.font.ARIAL_BOLD,
-              fontWeight: 'bold'
-            },
-            headerTitleAlign: 'center'
-          
-          })}
+                touchable 
+                press={()=> navigation.goBack()}
+                style={styles.back_icon}
+                src={require('../assets/icons/back.png')}/>,
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                  fontFamily: theme.font.ARIAL_BOLD,
+                  fontWeight: 'bold'
+                },
+                headerTitleAlign: 'center'
+              
+              })}
           />
 
         <dashboard.Screen

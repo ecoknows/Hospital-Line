@@ -107,7 +107,9 @@ function InfoScreen({navigation}){
         <View paddingTop={theme.size.padding*4} paddingHorizontal={theme.size.padding *4}>
             <View flex={1}>
                 
-                <Text roboto gray normal size={theme.size.normal - 2} style={styles.skip} >SKIP</Text>
+                <View  touchable press={() => navigation.navigate('Dashboard') } >
+                <Text roboto gray normal size={theme.size.normal} style={styles.skip} >SKIP</Text>
+                </View>
                 <Text title gray style={styles.hosiptal_line}>HOSPITAL <Text title light_blue>LINE</Text></Text>
 
             </View>
@@ -134,10 +136,11 @@ export default Main;
 const styles = StyleSheet.create({
     skip: {
         alignSelf:'flex-end',
+        marginTop: theme.size.margin * 3,
     }, 
     hosiptal_line: {
         alignSelf: 'center',
-        marginTop: theme.size.margin * 7,
+        
     },
     circle: {
         borderWidth: 2,
