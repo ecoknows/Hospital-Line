@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View} from 'react-native';
 import * as Permissions from 'expo-permissions';
-// import { Map, SplashScreen, Dashboard } from './screens';
 import Navigation from './navigations/Navigation';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
