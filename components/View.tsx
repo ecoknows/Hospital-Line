@@ -62,13 +62,27 @@ export default function Main(props : any){
     }
 
 
-    if(shadow != undefined){
+    if(shadow != undefined && !touchable){
+        
         return(
             <BoxShadow setting={shadow}>
                 <View style={[styles.view,viewStyle]} {...rest}>
                     {children}
                 </View>
             </BoxShadow>
+        )
+    }
+    
+
+    if(shadow != undefined && touchable){
+        return(
+            <TouchableOpacity style={t_style} onPress={press} activeOpacity={activeOpacity}>
+                <BoxShadow setting={shadow}>
+                        <Animated.View style={[styles.view,viewStyle]} {...rest}>
+                            {children}
+                        </Animated.View>
+                </BoxShadow>
+            </TouchableOpacity>
         )
     }
 
