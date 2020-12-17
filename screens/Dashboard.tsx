@@ -13,10 +13,10 @@ const options = [
 export default function DashBoard({navigation}){
 
   return(
-    <View flex={1} style={styles.container}>
-      <Pic src={require('../assets/images/dashboard/Bell.png')} style={styles.bell} touchable press={()=> navigation.navigate('Notifications')}width={30} />
+    <View flex={1} style={styles.container} white>
+      <Pic src={require('../assets/images/dashboard/Bell.png')} t_style={{alignSelf:'flex-end', marginTop: 10, marginRight: 10}} touchable press={()=> navigation.navigate('Notifications')}width={30} />
       <View center middle flexDirection={'row'}flex={1}>
-        <Pic src={require('../assets/images/hospital_line.png')} marginRight={theme.size.margin * 2} width={100}/>            
+        <Pic src={require('../assets/images/hospital_line.png')}   marginRight={theme.size.margin * 2} width={100}/>            
         <Text title gray >HOSPITAL <Text title light_blue>LINE</Text></Text>
 
       </View> 
@@ -34,8 +34,6 @@ export default function DashBoard({navigation}){
           
           />
       </View>          
-      <Pic src={require('../assets/images/Home.png')} style={styles.home } touchable press={()=>navigation.pop()} width={80} />
- 
     </View>
     
     
@@ -45,10 +43,6 @@ export default function DashBoard({navigation}){
 const styles = StyleSheet.create({
   container:{
     paddingTop: theme.size.padding * 3,
-  },
-  bell: {
-    alignSelf: 'flex-end',
-    marginHorizontal: 10,    
   },
   dashboard:{
     marginVertical: 0,

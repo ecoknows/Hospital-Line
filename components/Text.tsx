@@ -27,7 +27,6 @@ export default function Main(props : any){
 
     const textStyle = [
         style,
-        styles.text,
         
         roboto && styles.roboto,
         robot_bold && styles.robot_bold,
@@ -51,7 +50,7 @@ export default function Main(props : any){
     ];
 
     return(
-        <Text style={textStyle} {...rest}/>
+        <Text style={[styles.text,textStyle]} {...rest}/>
     );
 }
 

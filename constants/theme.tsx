@@ -245,6 +245,7 @@ const size = {
 
 const color = {
     semi_black: '#404040',
+    purple: '#3B58B5',
     gray : '#7A7A7A',
     light_gray: '#8B8B8B',
     light_blue : '#1DA6FD',
