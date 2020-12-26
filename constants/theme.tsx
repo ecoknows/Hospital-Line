@@ -320,11 +320,7 @@ export {
     color,
     size,
     home,
-<<<<<<< Updated upstream
     home_style,
     departments,
-=======
-    home_style
->>>>>>> Stashed changes
 }
   
