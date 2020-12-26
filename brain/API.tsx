@@ -27,6 +27,6 @@ function route(func : any ,{ fromCoordinates, toCoordinates } : route_interface 
       });
 }
 
-export default{
+export{
     route
 }

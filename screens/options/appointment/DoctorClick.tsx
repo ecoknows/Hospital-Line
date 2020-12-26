@@ -1,13 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, Dimensions, Animated, Easing } from 'react-native';
 import { Pic, View, Text, List, Input, Button } from '../../../components';
 import { theme } from '../../../constants';
 
-const { width, height } = Dimensions.get('window');
-
 const title_shadow = {
-    width: width * .17,
-    height: height * .08,
+    width: theme.size.width * .17,
+    height: theme.size.height * .08,
     color:"#000",
     border:17,
     radius:30,
@@ -32,16 +30,20 @@ const test_data = [
     {time: '5:50', ampm: 'PM', color: '#1DA6FD',textColor:'white'},
 ]
 
-function Main({navigation}){
-    const anim = useRef( new Animated.Value(height * .55)).current;
+function Main({navigation, route}){
+    const anim = useRef( new Animated.Value(theme.size.height * .55)).current;
+    const { firstname, lastname, middle_initial } = route.params;
+    const name = "Dr. " + firstname + " "+ middle_initial + ". " + lastname;
+    const [time_click, setTime_click] = useState('');
 
-    const openBottom =()=> {
+    const openBottom =(item)=> {
         Animated.timing(anim,{
             toValue: 0,
             duration: 1000,
-            easing: Easing.linear,
             useNativeDriver: false,
-        }).start();
+        }).start(()=>{
+            setTime_click(item.time+' '+item.ampm)
+        });
     }
     return(
         <View white paddingHorizontal={theme.size.padding * 4} paddingTop={theme.size.padding * 4}>
@@ -51,7 +53,7 @@ function Main({navigation}){
                     src={require('../../../assets/icons/default_dp_large.png')}
                 />
                 <View marginLeft={theme.size.margin * 3}>
-                    <Text avarage_sans style={styles.name}>Dr. Sandy Lapuz</Text>
+                    <Text avarage_sans style={styles.name}>{name}</Text>
                     <Text avarage_sans style={styles.specialty}>Dentist (Specialist)</Text>
                 </View>
             </View>
@@ -75,7 +77,7 @@ function Main({navigation}){
                     keyExtractor={(item, index)=> index.toString()}
                     renderItem={({item,index})=>
                     <View flex={false} touchable shadow={title_shadow} center middle style={styles.circle} backgroundColor={item.color}
-                        press={()=>openBottom()}
+                        press={()=>openBottom(item)}
                     >
                         <Text avarage_sans style={{color: item.textColor}}>{item.time}</Text>
                         <Text avarage_sans style={{color: item.textColor}}>{item.ampm}</Text>
@@ -83,17 +85,17 @@ function Main({navigation}){
                     }
                 />
             </View>
-            <BottomClick anim={anim} />
+            <BottomClick anim={anim} time_click={time_click}/>
         </View>
     )
 }
 
 function BottomClick(props){
-    const { anim } = props
+    const { anim, time_click} = props
     
     const closeBottom =()=> {
         Animated.timing(anim,{
-            toValue: height * .55,
+            toValue: theme.size.height * .55,
             duration: 1000,
             easing: Easing.linear,
             useNativeDriver: false,
@@ -112,6 +114,14 @@ function BottomClick(props){
             >
                 <Pic
                 src={require('../../../assets/icons/down_arrow.png')}/>
+            </View>
+
+            <View row center middle flex={false}>
+                <Pic
+                    src={require('../../../assets/icons/clock.png')}
+                    style={{marginRight: theme.size.margin*2}}
+                />
+                <Text avarage_sans fontSize={18} white>The time you picked is {time_click}</Text>
             </View>
 
             <Input
@@ -169,8 +179,8 @@ const styles = StyleSheet.create({
     },
     time_click: {
         position: 'absolute',
-        height : height * .55,
-        width,
+        height : theme.size.height * .55,
+        width: theme.size.width,
         backgroundColor: theme.color.accent,
         bottom: 0,
         paddingHorizontal: 40,

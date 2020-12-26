@@ -2,180 +2,220 @@ import { Dimensions } from 'react-native';
 
 const mapStyle=[
     {
-        "featureType": "water",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#e9e9e9"
-            },
-            {
-                "lightness": 17
-            }
-        ]
+      "featureType": "landscape",
+      "elementType": "geometry.fill",
+      "stylers": [
+        {
+          "color": "#d8e2fd"
+        }
+      ]
     },
     {
-        "featureType": "landscape",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#f5f5f5"
-            },
-            {
-                "lightness": 20
-            }
-        ]
+      "featureType": "landscape",
+      "elementType": "geometry.stroke",
+      "stylers": [
+        {
+          "visibility": "off"
+        }
+      ]
     },
     {
-        "featureType": "road.highway",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#ffffff"
-            },
-            {
-                "lightness": 17
-            }
-        ]
+      "featureType": "landscape.man_made",
+      "elementType": "geometry",
+      "stylers": [
+        {
+          "visibility": "off"
+        }
+      ]
     },
     {
-        "featureType": "road.highway",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "color": "#ffffff"
-            },
-            {
-                "lightness": 29
-            },
-            {
-                "weight": 0.2
-            }
-        ]
+      "featureType": "landscape.man_made",
+      "elementType": "geometry.fill",
+      "stylers": [
+        {
+          "color": "#d84f4f"
+        },
+        {
+          "visibility": "off"
+        }
+      ]
     },
     {
-        "featureType": "road.arterial",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#ffffff"
-            },
-            {
-                "lightness": 18
-            }
-        ]
+      "featureType": "landscape.man_made",
+      "elementType": "geometry.stroke",
+      "stylers": [
+        {
+          "color": "#d84f4f"
+        },
+        {
+          "visibility": "off"
+        }
+      ]
     },
     {
-        "featureType": "road.local",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#ffffff"
-            },
-            {
-                "lightness": 16
-            }
-        ]
+      "featureType": "poi",
+      "elementType": "geometry.fill",
+      "stylers": [
+        {
+          "color": "#e5fff3"
+        }
+      ]
     },
     {
-        "featureType": "poi",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#f5f5f5"
-            },
-            {
-                "lightness": 21
-            }
-        ]
+      "featureType": "poi",
+      "elementType": "labels.icon",
+      "stylers": [
+        {
+          "color": "#8fa7ff"
+        }
+      ]
     },
     {
-        "featureType": "poi.park",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#dedede"
-            },
-            {
-                "lightness": 21
-            }
-        ]
+      "featureType": "poi",
+      "elementType": "labels.text.fill",
+      "stylers": [
+        {
+          "color": "#394ca2"
+        }
+      ]
     },
     {
-        "elementType": "labels.text.stroke",
-        "stylers": [
-            {
-                "visibility": "on"
-            },
-            {
-                "color": "#ffffff"
-            },
-            {
-                "lightness": 16
-            }
-        ]
+      "featureType": "poi.business",
+      "elementType": "geometry",
+      "stylers": [
+        {
+          "color": "#ff0000"
+        },
+        {
+          "visibility": "off"
+        }
+      ]
     },
     {
-        "elementType": "labels.text.fill",
-        "stylers": [
-            {
-                "saturation": 36
-            },
-            {
-                "color": "#333333"
-            },
-            {
-                "lightness": 40
-            }
-        ]
+      "featureType": "poi.business",
+      "elementType": "geometry.fill",
+      "stylers": [
+        {
+          "color": "#ff0000"
+        }
+      ]
     },
     {
-        "elementType": "labels.icon",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
+      "featureType": "poi.business",
+      "elementType": "geometry.stroke",
+      "stylers": [
+        {
+          "color": "#c93636"
+        },
+        {
+          "visibility": "off"
+        }
+      ]
     },
     {
-        "featureType": "transit",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#f2f2f2"
-            },
-            {
-                "lightness": 19
-            }
-        ]
+      "featureType": "poi.government",
+      "elementType": "geometry",
+      "stylers": [
+        {
+          "color": "#ff0000"
+        }
+      ]
     },
     {
-        "featureType": "administrative",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#fefefe"
-            },
-            {
-                "lightness": 20
-            }
-        ]
+      "featureType": "poi.medical",
+      "elementType": "geometry.fill",
+      "stylers": [
+        {
+          "color": "#d6faff"
+        }
+      ]
     },
     {
-        "featureType": "administrative",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "color": "#fefefe"
-            },
-            {
-                "lightness": 17
-            },
-            {
-                "weight": 1.2
-            }
-        ]
+      "featureType": "poi.school",
+      "elementType": "geometry.fill",
+      "stylers": [
+        {
+          "color": "#f0f4ff"
+        }
+      ]
+    },
+    {
+      "featureType": "road",
+      "elementType": "geometry.stroke",
+      "stylers": [
+        {
+          "color": "#b3b3ff"
+        }
+      ]
+    },
+    {
+      "featureType": "road",
+      "elementType": "labels.text.fill",
+      "stylers": [
+        {
+          "color": "#adb4ff"
+        }
+      ]
+    },
+    {
+      "featureType": "road.highway",
+      "elementType": "geometry.fill",
+      "stylers": [
+        {
+          "color": "#ffffff"
+        }
+      ]
+    },
+    {
+      "featureType": "water",
+      "elementType": "geometry.fill",
+      "stylers": [
+        {
+          "color": "#c9d4fd"
+        }
+      ]
     }
 ]
+
+interface departments_interface {
+    image : number,
+    title : string,
+}
+
+const departments : departments_interface[]=[
+    {
+        image: require('../assets/icons/gynecology.png'),
+        title: 'Gynecology',
+    },
+    {
+        image: require('../assets/icons/Gastroenterology.png'),
+        title: 'Gastroenterology',
+    },
+    {
+        image: require('../assets/icons/tooth.png'),
+        title: 'Dental',
+    },
+    {
+        image: require('../assets/icons/Orthopedic.png'),
+        title: 'Orthopedic',
+    },
+    {
+        image: require('../assets/icons/General_Medicine.png'),
+        title: 'General Medicine',
+    },
+    {
+        image: require('../assets/icons/Pediatrician.png'),
+        title: 'Pediatrician',
+    },
+    {
+        image: require('../assets/icons/cake.png'),
+        title: 'cake',
+    },
+    {
+        image: require('../assets/icons/heart.png'),
+        title: 'heart',
+    },
+];
 
 const initial_region = {
   latitude: 37.78825,
@@ -280,6 +320,7 @@ export {
     color,
     size,
     home,
-    home_style
+    home_style,
+    departments,
 }
   

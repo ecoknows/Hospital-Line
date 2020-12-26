@@ -20,7 +20,7 @@ const shadowOpt = {
 }
 const options = [
   {title: 'Emergency' , source: require('../assets/images/dashboard/pin.png'), route: 'Emergency' , key:1  },
-  {title: 'Appointment' , source: require('../assets/images/dashboard/calendar.png'), route: 'Appointment' , key: 2 },
+  {title: 'Appointment' , source: require('../assets/images/dashboard/calendar.png'), route: 'AppointmentTopTab' , key: 2 },
   {title: 'Health Tips' , source: require('../assets/images/dashboard/healthcare.png'), route: 'HealthTips' , key: 3 },
   {title: 'Medicine Reminder' , source: require('../assets/images/dashboard/clock.png'), route: 'MedicineReminder' , key: 4},
 ]
@@ -44,7 +44,7 @@ export default function DashBoard({navigation}){
               <BoxShadow setting={shadowOpt}>
               <View style={styles.inside_item}center middle flex={1}>
                 <Pic src={item.source} marginBottom={theme.size.margin * 3} />
-                <Text size={theme.size.normal - 2} gray open_sans center>{item.title}</Text>
+                <Text size={theme.size.normal - 2} gray open_sans center>{item.title} </Text>
               </View>    
               </BoxShadow>
             </View>

@@ -1,8 +1,7 @@
 import React,{ useEffect, useRef, useState } from "react";
 import { Animated, Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
-import API from "../brain/API";
-import Compass from "../brain/Compass";
+import {api, compass} from "../brain";
 import {Mark, AnimatedLine} from '../components';
 import {theme} from '../constants';
 
@@ -18,8 +17,8 @@ let user_pos = {latitude: 0, longitude: 0};
 let map_pos = {
     latitude: 0, 
     longitude: 0,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    latitudeDelta: 0.0035,
+    longitudeDelta: 0.0010
 };
 let compass_ = true;
 function Main(){
@@ -54,13 +53,13 @@ function Main(){
         GetLocation({refresh, setRefresh});
         if(compass_){
 
-          Compass.start( (result : any) =>{
+          compass.start( (result : any) =>{
             const { heading } = result;
             rotateAnim.setValue(heading);
             },{subscription, setSubscription});
         
             return () => {
-            Compass.remove({subscription, setSubscription});
+            compass.remove({subscription, setSubscription});
             };
         }
     },[]);
@@ -251,7 +250,7 @@ function MapAnimation(props){
                 },  
                 350,
               )
-              API.route((result: [])=>{
+              api.route((result: [])=>{
                 setRoute(result);
               },{ 
               fromCoordinates : {longitude: user_pos.longitude, latitude: user_pos.latitude}, 

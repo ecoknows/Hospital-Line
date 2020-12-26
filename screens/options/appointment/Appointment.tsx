@@ -1,98 +1,178 @@
 import React,{useEffect, useRef, useState} from 'react';
-import {Text, View, Pic, List } from '../../../components';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { theme } from '../../../constants';
-import { Dimensions, StyleSheet, Animated,TouchableWithoutFeedback } from 'react-native';
-const {width, height} = Dimensions.get('window')
+import {createStore} from 'redux';
+import {Provider,useDispatch} from 'react-redux';
+import {Hospital, Clinic} from '../../../screens';
+import {StyleSheet, Keyboard} from 'react-native';
+import { Pic, View, Text, Input, List} from '../../../components';
+import { firebase_get_collection, firebase_search } from '../../../database/Firebase';
+import { updateCliniclDepartment, updateHospitalDepartment } from '../../../brain/redux/actions/appointment.actions';
 
-const title_shadow = {
-    width: width * .34,
-    height: height * .015,
-    color:"#000",
-    border:15,
-    radius:3,
-    opacity:0.2,
-    x:20,
-    y:28,
-}
-const options = [
-  {title: 'Gynecology' , image: require('../../../assets/icons/gynecology.png')},
-  {title: 'Gastroenterology' , image: require('../../../assets/icons/Gastroenterology.png')},
-  {title: 'toot' , image: require('../../../assets/icons/tooth.png')},
-  {title: 'Orthopedic' , image: require('../../../assets/icons/Orthopedic.png')},
-  {title: 'General Medicine' , image: require('../../../assets/icons/General_Medicine.png')},
-  {title: 'Pediatrician' , image: require('../../../assets/icons/Pediatrician.png')},
-  {title: 'cake' , image: require('../../../assets/icons/cake.png')},
-  {title: 'heart' , image: require('../../../assets/icons/heart.png')},
-]
 
-function Main({navigation}){
- 
+const appointment = createMaterialTopTabNavigator();
 
-  const Box = props => {
-    const anim = useRef(new Animated.Value(0.5)).current;
-    const color = anim.interpolate({
-      inputRange: [0.5,1],
-      outputRange: ['rgba(218,218,218,0.45)',theme.color.light_blue],
-      extrapolate: 'clamp'
-    })
-    const animStart =()=> {
-      anim.setValue(1); 
-      Animated.timing(anim, {
-        toValue: 0.5,
-        duration: 500,
-        useNativeDriver: false,
-      }).start(({ finished }) => {
-        navigation.navigate('DoctorList');
-      });
+const Main = ({navigation}) => {
   
-    }
-    return(
-        <View animated style={{borderColor: color, borderWidth: anim, paddingBottom: 60}}
-          >
-            
-          <TouchableWithoutFeedback style={{height: '100%', width: '100%', marginTop: 30,}} onPress={animStart}
-          >
-            <View marginTop={30}>
-              <Pic
-                src={props.src}
-                style={{alignSelf: 'center'}}
-              />
-              <View shadow={title_shadow} center middle flex={false} style={styles.title}>
-                <Text avarage_sans semi_black>{props.children}</Text>
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-         
-        </View>
-    )
+  const box_shadow = {
+    width: theme.size.width * .8,
+    height: theme.size.height * .05,
+    color:"#000",
+    border:5,
+    radius:5,
+    opacity:0.1,
+    x:1,
+    y:2,
   }
 
-  return (
-    <View paddingHorizontal={15} white>
-      <List
-        numColumns={2}
-        data={options}
-        renderItem={({item}) =>  <Box src={item.image} >{item.title}</Box>}
-        keyExtractor={(item, index) => index.toString()}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 100, paddingTop: 20}}
-      />
+  const box_shadow_search = {
+    width: theme.size.width * .8,
+    height: theme.size.height * .3,
+    color:"#000",
+    border:5,
+    radius:5,
+    opacity:0.1,
+    x:1,
+    y:2,
+    style: {position:'absolute', alignSelf: 'center', zIndex: 1, marginTop: theme.size.height * .055}
+  }
 
-    </View>
-  )  
+  const [ department, setDepartment] = useState(null);
+  const [ seach, setSearch ] = useState(false);
+  const [data, setData] = useState([]);
+  const [ status, setStatus ] = useState("Hospitals");
+
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+    const keyboardListenerShow = Keyboard.addListener('keyboardDidShow', ()=>{
+        setSearch(true);
+    });
+    
+    return () => {keyboardListenerShow.remove()}
+  },[])
+
+  useEffect(()=>{
+    firebase_get_collection(status).then((data:any)=>setData(data));
+  },[status])
+  
+
+  function SearchItems(){
+    return(  
+      <View shadow={box_shadow_search} white paddingVertical={10}>
+        <List
+          data={data}
+          renderItem={({index, item})=>  
+            <View flex={false} borderColor='rgba(196,196,196,0.2)' borderTopWidth={index == 0 ? 1: 0 } borderBottomWidth={1}>  
+                <View touchable style={{flex:1, paddingVertical: 5}} middle press={()=>{
+                  
+                   setSearch(false);
+                   setDepartment(item);
+                   if(status == 'Hospitals')
+                    dispatch(updateHospitalDepartment(item))
+                   else
+                    dispatch(updateCliniclDepartment(item))
+                }}>  
+                  <Text avarage_sans gray size={18} >{item.name}</Text>
+                </View>
+            </View>
+          }
+          
+           keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
+    );
+  }
+  
+
+    return (
+        <View>
+            <View flex={false} middle  light_blue paddingBottom={20}>
+              <View shadow={box_shadow} flex={false} >  
+              <View row white middle center flex={false}  style={styles.input_view}>
+                    <Input
+                              placeholder={ department != null ? department.name : 'Search for '+ status}
+                              autoFocus={true}
+                              placeholderStyle={{fontFamily: theme.font.AVARAGE_SANS_REGULAR, fontSize: 20}}
+                              style={[styles.input, {width: '100%',}]}
+                              onChangeText={text => {
+                                firebase_search(status,text.toLowerCase()).then((data: any)=>{
+                                    setData(data)
+                                })
+        
+                            }}
+                      />   
+      
+                  <View flex={false} absolute right={10}>  
+                    <Pic
+                      src={require('../../../assets/icons/search_blue.png')}
+                      style={styles.search_icon}
+                      touchable
+                    />
+                  </View>
+              </View>
+              </View>
+            </View>
+                { seach ? <SearchItems/>: null}
+              <appointment.Navigator 
+              
+              tabBarOptions={{
+                style: { elevation: 0, shadowOpacity: 0, borderBottomColor: '#C4C4C4', borderBottomWidth: 0.5,
+                },
+                labelStyle: { fontSize: 16, fontFamily: theme.font.ARIAL_BOLD},
+                activeTintColor: '#614FB2'
+              }}>
+                <appointment.Screen name="Hospital" 
+                component={Hospital}
+                listeners={{
+                  blur: e => {
+                    setStatus('Clinics')
+                  }
+                  }}
+                />
+                <appointment.Screen name="Clinic" component={Clinic} 
+                  
+                  listeners={{
+                  blur: e => {
+                    setStatus('Hospitals')
+                      
+                  }
+                  }}/>
+              </appointment.Navigator>
+          </View>
+    )
 }
 
-export default Main;
+
+export default Main
+
 
 const styles = StyleSheet.create({
-  title: {
-    marginTop: 15,
-    backgroundColor: '#ECEBEB',
-    width: width * .4,
-    height: height * .04,
-    marginLeft: 10,
-  },
-})
-
-
-
+    home_style: {
+      width : theme.size.width,
+      height: theme.size.height * 0.07,
+      position: 'absolute',
+      bottom: 0,
+      backgroundColor: 'white',
+      borderTopColor: '#C1C1C1',
+      borderWidth: 0.5
+    },
+    home: {
+      top: -25,
+    },
+    input:{
+      height: 40, 
+      fontSize: 17,
+      },
+      input_view:{
+      paddingHorizontal: 25,
+      width: theme.size.width * .8,
+      height: theme.size.height * 0.05,
+      backgroundColor:'white',
+      borderRadius: 5,
+      },
+      search_icon:{
+        height: theme.size.height * .07,
+        width: theme.size.width * .07,
+      }
+    })
