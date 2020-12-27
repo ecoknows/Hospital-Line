@@ -2,7 +2,7 @@ import React,{useEffect, useRef, useState} from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { theme } from '../../../constants';
 import {createStore} from 'redux';
-import {Provider,useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {Hospital, Clinic} from '../../../screens';
 import {StyleSheet, Keyboard} from 'react-native';
 import { Pic, View, Text, Input, List} from '../../../components';

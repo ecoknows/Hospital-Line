@@ -1,6 +1,7 @@
 import { LogBox, YellowBox } from "react-native";
 import * as firebase from 'firebase';
 import 'firebase/firestore';
+import * as geofirex from 'geofirex'; 
 
 var firebaseConfig = {
     apiKey: "AIzaSyBBvaH8wQoqzJTzQWOhUdNWz4tA5bJ0Gjs",
@@ -14,15 +15,39 @@ var firebaseConfig = {
 };
 
 const HOSPITALS = 'Hospitals';
+const MAPS = 'Maps';
 
-function InitializeFirebase(){
+
+export function InitializeFirebase(){
     // Initialize Firebase
     LogBox.ignoreLogs(['Setting a timer'])
     if(firebase.apps.length === 0)
       firebase.initializeApp(firebaseConfig);
 }
 
-async function firebase_get_collection(collection){
+export function firebase_get_nearest_map_coords(func,{center, radius}){
+    
+        const geo = geofirex.init(firebase);
+
+        const geoQuery = geo.query(MAPS);
+        const field = 'position';
+        center = geo.point(center.lat, center.long);
+        geoQuery.within(center, radius, field)
+        .subscribe((hits) => func(hits))
+}
+
+export function firebase_add_hospital_on_map(){
+    const geo = geofirex.init(firebase);
+    const cities = firebase.firestore().collection(MAPS);
+ 
+
+    const position = geo.point(14.606363, 120.9656804);
+ 
+    cities.add({ name: 'Me', position });
+}
+
+
+export async function firebase_get_collection(collection){
     try{
       const data = await firebase.firestore()
             .collection(collection)
@@ -33,7 +58,7 @@ async function firebase_get_collection(collection){
     }
 }
 
-async function firebase_search(collection,text){
+export async function firebase_search(collection,text){
     try{
       const data = await firebase.firestore()
             .collection(collection)
@@ -49,7 +74,7 @@ async function firebase_search(collection,text){
 }
 
 
-function TestFirebase(){
+export function TestFirebase(){
     firebase.firestore()
         .collection(HOSPITALS)
         .doc('doc1')
@@ -59,11 +84,4 @@ function TestFirebase(){
         .then(()=>{
             console.log('Wat');
         })
-}
-
-export {
-    InitializeFirebase,
-    TestFirebase,
-    firebase_get_collection,
-    firebase_search,
 }

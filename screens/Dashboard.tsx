@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, FlatList} from 'react-native';
-import { Pic, Text, View} from '../components';
+import { Pic, Text, View, Circle} from '../components';
 import { BoxShadow } from 'react-native-shadow';
 import { theme } from '../constants';
 
@@ -17,6 +17,17 @@ const shadowOpt = {
           padding: 0,
           justifyContent: 'center',
           alignItems: 'center'}
+}
+const practiceShadow = {
+  height: theme.size.height *.137,
+  width: theme.size.width * .44,
+  color:"#000",
+  border:5,
+  radius: 16,
+  opacity:0.15,
+  x: 3,
+  y: 3,
+  style:{ alignSelf: 'center'}
 }
 const options = [
   {title: 'Emergency' , source: require('../assets/images/dashboard/pin.png'), route: 'Emergency' , key:1  },
@@ -35,6 +46,36 @@ export default function DashBoard({navigation}){
 
       </View> 
 
+      <View shadow={practiceShadow}>
+        <View style={styles.callout}>
+          <View flex={false} row marginLeft={theme.size.padding+4} marginBottom={theme.size.margin*2}>
+            <Circle backgroundColor='#07FF4C' round={10} alignSelf='center' marginRight={theme.size.margin} />
+            <Text roboto size={15}>Available</Text>
+          </View>
+          <View flex={false} row  marginLeft={theme.size.padding+4} marginBottom={theme.size.margin*2}>
+            <Pic 
+              src={require('../assets/icons/km.png')}
+              style={{alignSelf:'center',marginRight:theme.size.margin}}
+            />
+            <Text roboto color='#817F7F' size={15}>4 km</Text>
+          </View>
+          <View borderColor='#E6E6E7' borderTopWidth={1}>
+            <View flex={false} row center middle paddingTop={5}marginBottom={theme.size.margin*2}>
+              <Pic 
+                src={require('../assets/icons/compass.png')}
+                style={{alignSelf:'center',marginRight:theme.size.margin}}
+              />
+              <Text roboto color='#053E92' size={16}>Get Directions</Text>
+            </View>
+          </View>
+          <Pic
+            src={require('../assets/icons/arr_indicator.png')}
+            style={{position:'absolute', bottom: -20, alignSelf:'center'}}
+          />
+        </View>
+
+      </View>
+
       <View style={styles.dashboard} flex={3} >
         <FlatList
           numColumns={2}
@@ -51,11 +92,7 @@ export default function DashBoard({navigation}){
           )}
           
           />
-      </View>    
-
-      <View center middle style={theme.home_style} flex={1}>
-      <Pic src={require('../assets/images/Home.png')} style={theme.home } touchable press={()=>navigation.goBack()} width={80} />
-      </View>       
+      </View>     
     </View>
     
     
@@ -86,7 +123,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     height: theme.size.normal * 9,
     width: theme.size.normal * 9,
+  },
+  callout:{
+    paddingVertical:theme.size.padding+4,
+    height: '100%',
+    width: '104%',
+    borderRadius: 20,
+    backgroundColor: 'white'
   }
-
   
 })

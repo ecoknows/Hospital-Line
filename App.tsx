@@ -7,7 +7,7 @@ import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
 import { Provider } from 'react-redux';
 import { store } from './brain/redux'
-import { InitializeFirebase, TestFirebase } from './database/Firebase';
+import { InitializeFirebase,firebase_get_nearest_map_coords } from './database/Firebase';
 
 const  getFonts =()=> Font.loadAsync({
   'Teko' : require('./assets/fonts/Teko-Regular.ttf'),

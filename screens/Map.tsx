@@ -1,16 +1,13 @@
 import React,{ useEffect, useRef, useState } from "react";
-import { Animated, Dimensions, Image, StyleSheet, Text, View } from "react-native";
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
+import { Animated, StyleSheet, Text, View } from "react-native";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import {api, compass} from "../brain";
 import {Mark, AnimatedLine} from '../components';
 import {theme} from '../constants';
+import { firebase_get_nearest_map_coords } from "../database/Firebase";
 
-
-
-const { width,height } = Dimensions.get('window');
 const CARD_HEIGHT = 220;
-const CARD_WIDTH = width * 0.8;
-const DATA = theme.testing_data;
+const CARD_WIDTH = theme.size.width * 0.8;
 let start = false;
 let current_index = -1;
 let user_pos = {latitude: 0, longitude: 0};
@@ -20,11 +17,14 @@ let map_pos = {
     latitudeDelta: 0.0035,
     longitudeDelta: 0.0010
 };
+
+
 let compass_ = true;
 function Main(){
     const [subscription, setSubscription] = useState(null);
     const [refresh, setRefresh] = useState(true);
     const [route, setRoute] = useState([]);
+    const [places , setPlaces] = useState([]);
 
     let mapIndex = 0;
     const mapAnimation = useRef(new Animated.Value(0)).current;
@@ -32,28 +32,13 @@ function Main(){
     const rootViewAnim = useRef(new Animated.Value(0)).current;
 
     const _map = useRef(null);
-    const interpolations = DATA.map((item, index)=>{
-        const inputRange = [
-        (index - 1) * CARD_WIDTH,
-        index * CARD_WIDTH,
-        ((index+1) * CARD_WIDTH),
-        ];
-
-        const scale = mapAnimation.interpolate({
-        inputRange,
-        outputRange:[1,1.3,1],
-        extrapolate: 'clamp',
-        });
-
-        return {scale};
-    });
-
+    
     useEffect(()=>{
         MapAnimation({mapAnimation, setRoute , mapIndex, _map});
         GetLocation({refresh, setRefresh});
         if(compass_){
 
-          compass.start( (result : any) =>{
+            compass.start( (result : any) =>{
             const { heading } = result;
             rotateAnim.setValue(heading);
             },{subscription, setSubscription});
@@ -64,6 +49,11 @@ function Main(){
         }
     },[]);
 
+
+    if(places.length == 0){
+      GetNeareastHospital(100, setPlaces)
+    }
+    
     
     if(!start){
         return(
@@ -72,6 +62,7 @@ function Main(){
         </View>
         )
     }
+
     return(
         <View>
         <MapView
@@ -92,17 +83,13 @@ function Main(){
         >
             <User rotateAnim={rotateAnim} rootViewAnim={rootViewAnim}/>
             <Direction route={route}/>
-            {DATA.map(
-                    (item, index) => <Places key={index} index={index} item={item} interpolations={interpolations}  setRoute={setRoute}/>
+
+            {places.map(
+                    (item, index) => <Places key={index} index={index} item={item} setRoute={setRoute}/>
             )}
             
         </MapView>
-            
-        <Marker
-        coordinate={ {latitude: 14.6093263, longitude: 120.9717062}}
-        
-        
-        />
+          
         
         </View>
        
@@ -110,45 +97,10 @@ function Main(){
 }
 
 //<Near_Places mapAnimation={mapAnimation} />
-
+  
 
 // BUILT IN METHODS
-function Near_Places(props){
-    const { mapAnimation } = props;
-    return(
-        <Animated.FlatList
-        data={DATA}
-        style={styles.place}
-        renderItem={({item})=>
-        <View style={styles.item}>
-          <Image source={item.image} style={{
-            resizeMode: 'contain',
-            flex: 1,
-            alignSelf:'center',
-          }} />
 
-          <Text style={{color:'#808080', alignSelf:'center',}}>{item.place}</Text>
-        </View>}
-        horizontal
-        keyExtractor={ (item) => item.place}
-        snapToInterval={CARD_WIDTH + 20}
-        snapToAlignment="center"
-        scrollEventThrottle={1}
-        showsHorizontalScrollIndicator={false}
-
-        onScroll={Animated.event([{
-            nativeEvent: {
-              contentOffset:{
-                x: mapAnimation,
-              }
-            }
-        }],
-          {useNativeDriver: true}
-          )}
-
-      />
-    )
-}
 function User(props){
     const {rotateAnim, rootViewAnim} = props;
     return(
@@ -169,44 +121,33 @@ function User(props){
         viewStyle={{ transform: [{
           rotate: rotateAnim.interpolate({
               inputRange: [0,360],
-              outputRange: ['360deg','0deg'],
+              outputRange: ['0deg','360deg'],
               extrapolate: 'clamp',
           })
           }]}}
         imageStyle={{
             resizeMode:'contain',
-            width: 60,
-            height: 60,   
+            width: 80,
+            height: 80,   
            }}
         />
     )
 }
 
 function Places(props){
-    const { item, index, interpolations, setRoute} = props;
-
-    const scaleStyle = {
-        transform : [
-        {
-            scale: interpolations[index].scale,
-        }
-        ]
-    }
+    const { item, setRoute} = props;
+    const { geopoint } = item.position
+    const { distance } = item.hitMetadata
+    let dis = distance.toFixed(0) != 0 ? distance.toFixed(1) + ' km': (distance.toFixed(3) * 1000) + ' m'
     return(
         <Mark 
-              animated
-              percentage={item.percentage}
-              coordinate={item.coordinate}
+              coordinate={{latitude: geopoint.U, longitude: geopoint.k}}
               userPosition={{longitude: user_pos.longitude, latitude: user_pos.latitude}}
               image={require('../assets/icons/marker.png')}
-              viewStyle={[scaleStyle]}
-              percentageStyle={{color: item.color}}
+              distance={dis}
+              availability={item.availability}
               setRoute={setRoute}
-              >
-  
-                <Text>{item.place}</Text>
-  
-        </Mark>
+              />
     );
 }
 
@@ -290,12 +231,24 @@ function GetLocation(props){
         
 }
 
+function GetNeareastHospital(radius, setPlaces){
+  if(user_pos.latitude != user_pos.longitude)
+    firebase_get_nearest_map_coords((hits)=>{
+      setPlaces(hits)
+      
+      
+    },{
+      center: {lat: user_pos.latitude, long: user_pos.longitude}, 
+      radius: radius,
+    });
+}
+
 export default Main;
 
 const styles = StyleSheet.create({
     mapStyle: {
-       width,
-       height,
+       width: theme.size.width,
+       height: theme.size.height,
     },
     scrollView:{
       height : 50,
@@ -319,4 +272,4 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       flexDirection: 'column'
     }
-  });
+});

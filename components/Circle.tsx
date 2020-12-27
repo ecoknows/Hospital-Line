@@ -18,7 +18,6 @@ export default function Main(props : any){
 
     const circleStyle = [
         style,
-        styles.circle,
 
         center && {justifyContent: 'center'},
         middle && {alignItems: 'center'},
@@ -32,14 +31,14 @@ export default function Main(props : any){
 
     if(animated){
         return(
-            <Animated.View  style={circleStyle} {...rest}>
+            <Animated.View  style={[styles.circle,circleStyle]} {...rest}>
                 {children}
             </Animated.View>
         )
     }
 
     return(
-        <View style={circleStyle} {...rest}>
+        <View style={[styles.circle,circleStyle]} {...rest}>
             {children}
         </View>
     );
