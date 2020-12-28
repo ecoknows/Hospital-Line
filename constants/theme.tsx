@@ -283,6 +283,49 @@ export const home = {
     top: -25,
 };
 
+
+
+
+export function readable_time(seconds : number){
+  let result : string = '';
+  
+  if(seconds / 31556926 > 0){
+    let x = Math.trunc(seconds / 31556926 )
+    result += (x + ' year ' + (x > 0) ? ' s' : ''+ ',' )
+  }
+
+  if(seconds / 2629743.83 > 0){
+    let x = Math.trunc(seconds / 2629743.83 )
+    result += (x + ' month ' + (x > 0) ? ' s' : ''+ ',' )
+  }
+  
+  if(seconds / 604800  > 0){
+    let x = Math.trunc(seconds / 604800  )
+    result += (x + ' week ' + (x > 0) ? ' s' : ''+ ',' )
+  }
+
+  if(seconds / 86400  > 0){
+    let x = Math.trunc(seconds / 86400  )
+    result += (x + ' day ' + (x > 0) ? ' s' : ''+ ',' )
+  }
+
+  if(seconds / 3600  > 0){
+    let x = Math.trunc(seconds / 3600)
+    result += (x + ' hour ' + (x > 0) ? ' s' : ''+ ',' )
+  }
+  
+  if(seconds / 60  > 0){
+    let x = Math.trunc(seconds / 60)
+    result += (x + ' minute ' + (x > 0) ? ' s' : ''+ ',' )
+  }
+
+  if(seconds / 60  < 0){
+    result += (seconds + ' second ' + (seconds > 0) ? ' s' : ''+ ',' )
+  }
+
+  return result;
+}
+
 export const home_style =  {
     width: size.width,
     height: size.height * 0.07,
