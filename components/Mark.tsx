@@ -101,7 +101,7 @@ export default function Main(props : any){
                   />
                   <Text roboto color='#817F7F' size={15}>{distance}</Text>
                 </View>
-                <View borderColor='#E6E6E7' borderTopWidth={1}>
+                <View touchable borderColor='#E6E6E7' borderTopWidth={1}>
                   <View flex={false} row center middle paddingTop={5}marginBottom={theme.size.margin*2}>
                     <Pic 
                       src={require('../assets/icons/compass.png')}
@@ -138,13 +138,15 @@ export default function Main(props : any){
 }
 
 function marker_on_press(coordinate : any,setRoute : any, userPosition : {longitude: number, latitude: number}){
-    /*
+    
     api.route((result: [])=>{
         setRoute(result);
+        console.log('eco');
+        
       },{ 
       fromCoordinates : {longitude: userPosition.longitude, latitude: userPosition.latitude}, 
       toCoordinates : {longitude: coordinate.longitude, latitude:coordinate.latitude} 
-    })*/
+    })
 }
 
 const styles = StyleSheet.create({

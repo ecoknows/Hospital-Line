@@ -1,4 +1,4 @@
-const HTTP_HOSTING_ADDRESS = /*'https://hospitalline.loca.lt/'*/ "http://192.168.1.16:5000/";
+const HTTP_HOSTING_ADDRESS = 'https://hospitalline.loca.lt/';
 
 interface route_interface{
     fromCoordinates: {latitude: number ,longitude : number},
@@ -12,7 +12,7 @@ function route(func : any ,{ fromCoordinates, toCoordinates } : route_interface 
     
     fetch(OSRM_API_REQUEST).then((response) => response.json()).then(
         (json)=>{
-            const arr = [];
+            const arr : {longitude: number, latitude: number}[]=[];
         
             for(let i = 0; i < json.routes[0].legs[0].steps.length; i++){
               for(let x = 0; x < json.routes[0].legs[0].steps[i].intersections.length; x++){
