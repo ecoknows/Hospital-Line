@@ -28,6 +28,7 @@ export default function Emergency({navigation}){
           src={require('../../assets/icons/emergency_home.png')}
         />
       </View>
+      
     </View>
   )
   
