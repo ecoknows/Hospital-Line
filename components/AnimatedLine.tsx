@@ -35,17 +35,11 @@ function Main({time, coordinates} : line_interface){
 
     return(
         <View>
-            
-
+        
         <Polyline
             coordinates={coords}
-            strokeColor='rgba(91, 91, 91, 0.10)' // fallback for when `strokeColors` is not supported by the map-provider
-            strokeWidth={10}
-        />
-        <Polyline
-            coordinates={coords}
-            strokeColor="#7A7A7A" // fallback for when `strokeColors` is not supported by the map-provider
-            strokeWidth={5}
+            strokeColor="#8F95FF" // fallback for when `strokeColors` is not supported by the map-provider
+            strokeWidth={6}
         />
         </View>
     );

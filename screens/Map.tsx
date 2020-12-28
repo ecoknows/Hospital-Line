@@ -1,8 +1,8 @@
 import React,{ useEffect, useRef, useState } from "react";
-import { Animated, StyleSheet, Text, View } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import {api, compass} from "../brain";
-import {Mark, AnimatedLine} from '../components';
+import {Mark, AnimatedLine, Text, View, Pic, List} from '../components';
 import {theme} from '../constants';
 import { firebase_get_nearest_map_coords } from "../database/Firebase";
 
@@ -17,6 +17,34 @@ let map_pos = {
     latitudeDelta: 0.0035,
     longitudeDelta: 0.0010
 };
+
+
+
+
+const top_shadow = {
+  height: theme.size.height *.19,
+  width: theme.size.width * .9,
+  color:"#000",
+  border:5,
+  radius: 20,
+  opacity:0.05,
+  x: 0,
+  y: 3,
+}
+
+const bottom_shadow = {
+  height: theme.size.height *.12,
+  width: theme.size.width * .8,
+  color:"#000",
+  border:5,
+  radius: 30,
+  opacity:0.05,
+  x: 0,
+  y: 3,
+  style: {
+    bottom: theme.size.height * .20, position: 'absolute'
+  }
+}
 
 
 let compass_ = true;
@@ -57,14 +85,14 @@ function Main(){
     
     if(!start){
         return(
-        <View>
+        <View center middle>
             <Text>Loading Screen</Text>
         </View>
         )
     }
 
     return(
-        <View>
+        <View flex={false}>
         <MapView
         ref={_map}
         provider={PROVIDER_GOOGLE}
@@ -89,6 +117,8 @@ function Main(){
             )}
             
         </MapView>
+        <ShowDirection/>
+
           
         
         </View>
@@ -96,10 +126,79 @@ function Main(){
     );
 }
 
-//<Near_Places mapAnimation={mapAnimation} />
-  
 
-// BUILT IN METHODS
+function ShowDirection(props){
+  const TopViewItem =(props)=>{
+    const{ item, index} = props;
+
+    return(
+      <View row middle center>
+        <Pic
+          src={item.image}
+          marginRight={theme.size.margin * 2}
+        />
+        <Text roboto size={ index == 0 ? 15 : 13} color={ index != 0 ? '#9F9F9F' : '#343434'}>{item.direction}</Text>
+        <Text roboto size={12} color='#6473FF'>  {item.distance}</Text>
+      </View>
+    )
+  }
+
+  return(
+    
+    <View absolute style={styles.show_direction} paddingTop={theme.size.padding*5} middle> 
+      
+      <View shadow={top_shadow}>
+          <View style={styles.top_view} middle paddingVertical={theme.size.padding * 2}>
+            <View flex={false} absolute right={0}> 
+            <View touchable style={{padding: 13}} press={()=>{}}>
+              <Pic
+                src={require('../assets/icons/close_gray.png')}
+              />
+            </View>
+             
+            </View>
+            <Pic
+              src={require('../assets/icons/map_nav_dir.png')}
+              marginBottom={5}
+            />
+            <Text roboto color='#6C6C6C' size={14} style={{marginBottom: theme.size.margin * 3}}>65.3 minutes and 30 seconds</Text>
+            
+
+            <List
+              data={[
+                {direction: 'Head east onto Sto. Nino St', image: require('../assets/direction_icons/east.png'), distance: '20 km'},
+                {direction: 'Turn right onto Blue St', image: require('../assets/direction_icons/right.png'), distance: '20 km'}
+              ]}
+              renderItem={({item,index})=><TopViewItem item={item} index={index}/>}
+              keyExtractor={(item,index)=> index.toString()}
+            />
+            
+          </View>
+      </View>
+      <View flex={false} row style={{alignSelf: 'flex-start', marginLeft: theme.size.margin * 4, marginTop: theme.size.margin*2}}>
+        <View flex={false} center middle touchable style={{height: 50, width: 50, backgroundColor: 'white', borderRadius: 10, marginRight: 8}}>
+        
+           <Pic src={require('../assets/icons/bike.png')} />
+        </View>
+        <View flex={false} center middle touchable style={{height: 50, width: 50, backgroundColor: '#678FF5', borderRadius: 10, marginRight: 8}}>
+           <Pic src={require('../assets/icons/car.png')} />
+        </View>
+        <View flex={false} center middle touchable style={{height: 50, width: 50, backgroundColor: 'white', borderRadius: 10, marginRight: 8}}>
+        
+           <Pic src={require('../assets/icons/walk.png')} />
+        </View>
+      </View>
+
+
+      <View shadow={bottom_shadow}>
+          <View style={styles.bottom_view} middle center paddingHorizontal={5}>
+            <Text robot_bold size={17} color='#545454'>Philippine General Hospital</Text>
+            <Text robot_bold size={14} color='#9F9F9F' center>Taft Ave, Ermita, 1000 Metro Manila</Text>
+          </View>
+      </View>
+    </View>
+  );
+}
 
 function User(props){
     const {rotateAnim, rootViewAnim} = props;
@@ -246,9 +345,10 @@ function GetNeareastHospital(radius, setPlaces){
 export default Main;
 
 const styles = StyleSheet.create({
+    
     mapStyle: {
-       width: theme.size.width,
-       height: theme.size.height,
+      width: theme.size.width,
+      height: theme.size.height,
     },
     scrollView:{
       height : 50,
@@ -271,5 +371,23 @@ const styles = StyleSheet.create({
       overflow: "hidden",
       justifyContent: 'center',
       flexDirection: 'column'
-    }
+    },
+    show_direction:{
+      height: theme.size.height,
+      width: theme.size.width,
+    },
+    top_view: {
+      backgroundColor: 'rgba(255,255,255,0.75)',
+      height: '100%',
+      width: '101%',
+      alignSelf: 'center',
+      borderRadius: 22,
+    },
+    bottom_view: {
+      backgroundColor: 'rgba(255,255,255,0.75)',
+      height: '100%',
+      width: '101%',
+      alignSelf: 'center',
+      borderRadius: 30,
+    },
 });

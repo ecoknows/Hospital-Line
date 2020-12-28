@@ -101,7 +101,7 @@ export default function Main(props : any){
                   />
                   <Text roboto color='#817F7F' size={15}>{distance}</Text>
                 </View>
-                <View touchable borderColor='#E6E6E7' borderTopWidth={1}>
+                <View borderColor='#E6E6E7' borderTopWidth={1}>
                   <View flex={false} row center middle paddingTop={5}marginBottom={theme.size.margin*2}>
                     <Pic 
                       src={require('../assets/icons/compass.png')}
