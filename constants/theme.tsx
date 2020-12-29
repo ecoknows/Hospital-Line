@@ -288,41 +288,73 @@ export const home = {
 
 export function readable_time(seconds : number){
   let result : string = '';
+  let stat : number = 0;
   
   if(seconds / 31556926 > 0){
     let x = Math.trunc(seconds / 31556926 )
-    result += (x + ' year ' + (x > 0) ? ' s' : ''+ ',' )
+    seconds -= 31556926;
+    result += (x + ' year' + (x > 0) ? 's and' : ' and')
+    stat++;
+    if(stat == 2 || seconds <= 0)
+      return result += (x + ' year' + (x > 0) ? 's' : '')
+    else 
+      result += (x + ' year' + (x > 0) ? 's and' : ' and')
   }
 
   if(seconds / 2629743.83 > 0){
     let x = Math.trunc(seconds / 2629743.83 )
-    result += (x + ' month ' + (x > 0) ? ' s' : ''+ ',' )
+    seconds -= 2629743.83;
+    stat++;
+    if(stat == 2 || seconds <= 0)
+      return result += (x + ' month' + (x > 0) ? 's' : '')
+    else 
+      result += (x + ' month' + (x > 0) ? 's and' : ' and')
   }
   
   if(seconds / 604800  > 0){
     let x = Math.trunc(seconds / 604800  )
-    result += (x + ' week ' + (x > 0) ? ' s' : ''+ ',' )
+    seconds -= 604800;
+    stat++;
+    if(stat == 2 || seconds <= 0)
+      return result += (x + ' week' + (x > 0) ? 's' : '')
+    else 
+      result += (x + ' week' + (x > 0) ? 's and' : ' and')
   }
 
   if(seconds / 86400  > 0){
     let x = Math.trunc(seconds / 86400  )
-    result += (x + ' day ' + (x > 0) ? ' s' : ''+ ',' )
+    seconds -= 86400;
+    stat++;
+    if(stat == 2 || seconds <= 0)
+      return result += (x + ' day' + (x > 0) ? 's' : '')
+    else 
+     result += (x + ' day' + (x > 0) ? 's and' : ' and')
   }
 
   if(seconds / 3600  > 0){
     let x = Math.trunc(seconds / 3600)
-    result += (x + ' hour ' + (x > 0) ? ' s' : ''+ ',' )
+    seconds -= 3600;
+    stat++;
+    if(stat == 2 || seconds <= 0)
+      return result += (x + ' hour' + (x > 0) ? 's' : '')
+    else 
+      result += (x + ' hour' + (x > 0) ? 's and' : ' and' )
   }
   
   if(seconds / 60  > 0){
+    seconds -= 60;
     let x = Math.trunc(seconds / 60)
-    result += (x + ' minute ' + (x > 0) ? ' s' : ''+ ',' )
+    stat++;
+    if(stat == 2 || seconds <= 0)
+      return result += (x + ' minute' + (x > 0) ? 's' : '')
+    else 
+      result += (x + ' minute' + (x > 0) ? 's and' : ' and')
   }
 
   if(seconds / 60  < 0){
-    result += (seconds + ' second ' + (seconds > 0) ? ' s' : ''+ ',' )
+    result += seconds + ' second'
   }
-
+ 
   return result;
 }
 
