@@ -3,6 +3,7 @@ import { StyleSheet, FlatList} from 'react-native';
 import { Pic, Text, View, Circle, List} from '../components';
 import { BoxShadow } from 'react-native-shadow';
 import { theme } from '../constants';
+import moment from 'moment';
 
 const shadowOpt = {
     height: theme.size.height *.2,
@@ -26,8 +27,42 @@ const options = [
   {title: 'Medicine Reminder' , source: require('../assets/images/dashboard/clock.png'), route: 'MedicineReminder' , key: 4},
 ]
 
+function millisecondsToStr (milliseconds) {
+  // TIP: to find current time in milliseconds, use:
+  // var  current_time_milliseconds = new Date().getTime();
+  milliseconds *= 1000;
+  function numberEnding (number) {
+      return (number > 1) ? 's' : '';
+  }
+
+  var temp = Math.floor(milliseconds / 1000);
+  var years = Math.floor(temp / 31536000);
+  if (years) {
+      return years + ' year' + numberEnding(years);
+  }
+  //TODO: Months! Maybe weeks? 
+  var days = Math.floor((temp %= 31536000) / 86400);
+  if (days) {
+      return days + ' day' + numberEnding(days);
+  }
+  var hours = Math.floor((temp %= 86400) / 3600);
+  if (hours) {
+      return hours + ' hour' + numberEnding(hours);
+  }
+  var minutes = Math.floor((temp %= 3600) / 60);
+  if (minutes) {
+      return minutes + ' minute' + numberEnding(minutes);
+  }
+  var seconds = temp % 60;
+  if (seconds) {
+      return seconds + ' second' + numberEnding(seconds);
+  }
+  return 'less than a second'; //'just now' //or other string you like;
+}
+
 export default function DashBoard({navigation}){
 
+  console.log(millisecondsToStr(124));
 
   return(
   <View flex={1} style={styles.container}>

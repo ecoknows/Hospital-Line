@@ -5,6 +5,7 @@ import {api, compass} from "../brain";
 import {Mark, AnimatedLine, Text, View, Pic, List} from '../components';
 import {theme} from '../constants';
 import { firebase_get_nearest_map_coords } from "../database/Firebase";
+import moment from 'moment';
 
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = theme.size.width * 0.8;
@@ -51,18 +52,37 @@ let compass_ = true;
 function Main(){
     const [subscription, setSubscription] = useState(null);
     const [refresh, setRefresh] = useState(true);
-    const [route, setRoute] = useState([]);
     const [places , setPlaces] = useState([]);
+    const [isdirection, setIsDirection] = useState(false);
+    
+    interface RoutesInterface{
+      total_distance: number,
+      duration: number,
+      steps: {latitude: number, longitude: number}[],
+      maneuver: {
+        type: string,
+        modifier: string,
+      }[],
+    }
 
-    let mapIndex = 0;
-    const mapAnimation = useRef(new Animated.Value(0)).current;
+    const [direction, setDirection] = useState< RoutesInterface>({
+      total_distance: 0,
+      duration: 0,
+      steps: [],
+      maneuver: [],
+    });
+
     const rotateAnim = useRef(new Animated.Value(0)).current;
     const rootViewAnim = useRef(new Animated.Value(0)).current;
 
     const _map = useRef(null);
+    useEffect(()=>{
+      if(direction.steps.length != 0){
+        setIsDirection(true);
+      }
+    },[direction])
     
     useEffect(()=>{
-        MapAnimation({mapAnimation, setRoute , mapIndex, _map});
         GetLocation({refresh, setRefresh});
         if(compass_){
 
@@ -110,14 +130,14 @@ function Main(){
           }}
         >
             <User rotateAnim={rotateAnim} rootViewAnim={rootViewAnim}/>
-            <Direction route={route}/>
+            <Direction route={direction.steps}/>
 
             {places.map(
-                    (item, index) => <Places key={index} index={index} item={item} setRoute={setRoute}/>
+                    (item, index) => <Places key={index} index={index} item={item} state={{setDirection}} />
             )}
             
         </MapView>
-        <ShowDirection/>
+       {isdirection ? <ShowDirection setIsDirection={setIsDirection} direction={direction}/> : null} 
 
           
         
@@ -128,20 +148,30 @@ function Main(){
 
 
 function ShowDirection(props){
+  const { setIsDirection, direction} = props;
+  const { duration, maneuver } = direction;
+
   const TopViewItem =(props)=>{
     const{ item, index} = props;
-
+    const { type, modifier, distance } = item;
+    /*
+    [
+                  {direction: 'Head east onto Sto. Nino St', image: require('../assets/direction_icons/east.png'), distance: '20 km'},
+                  {direction: 'Turn right onto Blue St', image: require('../assets/direction_icons/right.png'), distance: '20 km'}
+    ]*/
+              
     return(
       <View row middle center>
         <Pic
-          src={item.image}
+          src={require('../assets/direction_icons/east.png')}
           marginRight={theme.size.margin * 2}
         />
-        <Text roboto size={ index == 0 ? 15 : 13} color={ index != 0 ? '#9F9F9F' : '#343434'}>{item.direction}</Text>
-        <Text roboto size={12} color='#6473FF'>  {item.distance}</Text>
+        <Text roboto size={ index == 0 ? 15 : 13} color={ index != 0 ? '#9F9F9F' : '#343434'}>{modifier}</Text>
+        <Text roboto size={12} color='#6473FF'>  {distance} m</Text>
       </View>
     )
   }
+  
 
   return(
     
@@ -150,7 +180,7 @@ function ShowDirection(props){
       <View shadow={top_shadow}>
           <View style={styles.top_view} middle paddingVertical={theme.size.padding * 2}>
             <View flex={false} absolute right={0}> 
-            <View touchable style={{padding: 13}} press={()=>{}}>
+            <View touchable style={{padding: 13}} press={()=>setIsDirection(false)}>
               <Pic
                 src={require('../assets/icons/close_gray.png')}
               />
@@ -161,14 +191,10 @@ function ShowDirection(props){
               src={require('../assets/icons/map_nav_dir.png')}
               marginBottom={5}
             />
-            <Text roboto color='#6C6C6C' size={14} style={{marginBottom: theme.size.margin * 3}}>65.3 minutes and 30 seconds</Text>
-            
+            <Text roboto color='#6C6C6C' size={14} style={{marginBottom: theme.size.margin * 3}}>duration</Text>
 
             <List
-              data={[
-                {direction: 'Head east onto Sto. Nino St', image: require('../assets/direction_icons/east.png'), distance: '20 km'},
-                {direction: 'Turn right onto Blue St', image: require('../assets/direction_icons/right.png'), distance: '20 km'}
-              ]}
+              data={maneuver}
               renderItem={({item,index})=><TopViewItem item={item} index={index}/>}
               keyExtractor={(item,index)=> index.toString()}
             />
@@ -234,7 +260,7 @@ function User(props){
 }
 
 function Places(props){
-    const { item, setRoute} = props;
+    const { item, state} = props;
     const { geopoint } = item.position
     const { distance } = item.hitMetadata
     let dis = distance.toFixed(0) != 0 ? distance.toFixed(1) + ' km': (distance.toFixed(3) * 1000) + ' m'
@@ -245,7 +271,7 @@ function Places(props){
               image={require('../assets/icons/marker.png')}
               distance={dis}
               availability={item.availability}
-              setRoute={setRoute}
+              state={state}
               />
     );
 }
@@ -259,48 +285,6 @@ function Direction(props){
             time={50}
           />
     );
-}
-
-function MapAnimation(props){
-    let { mapAnimation, setRoute, mapIndex, _map} = props;
-    mapAnimation.addListener(({value})=>{
-        let index = Math.floor(value / CARD_WIDTH + 0.3 );
-  
-        if(index >= DATA.length){
-          index = DATA.length - 1;
-        }
-        if(index < 0){
-          index = 0;
-        }
-        
-  
-        if(current_index != index){
-          current_index = index;
-          clearTimeout(regionTimeout);
-  
-          const regionTimeout = setTimeout(()=>{
-            if(mapIndex != index){
-              mapIndex = index;
-              const {coordinate} = DATA[index];
-              _map.current.animateToRegion(
-                {
-                  ...coordinate,
-                  latitudeDelta: 0.0922,
-                  longitudeDelta: 0.0421,
-                },  
-                350,
-              )
-              api.route((result: [])=>{
-                setRoute(result);
-              },{ 
-              fromCoordinates : {longitude: user_pos.longitude, latitude: user_pos.latitude}, 
-              toCoordinates : {longitude: coordinate.longitude, latitude:coordinate.latitude} 
-            })
-            }
-          },10);
-  
-        }
-      });
 }
 
 function GetLocation(props){

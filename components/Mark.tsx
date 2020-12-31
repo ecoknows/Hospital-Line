@@ -38,7 +38,7 @@ export default function Main(props : any){
     const {
       coordinate, 
       userPosition,
-      setRoute,
+      state,
       children,
       image, 
       imageStyle, 
@@ -54,7 +54,7 @@ export default function Main(props : any){
         <Marker
         coordinate={coordinate}
         anchor={{ x: 0.5, y: .6 }}
-        onPress={()=>marker_on_press(coordinate,setRoute, userPosition)}
+        onPress={()=>marker_on_press(coordinate,state, userPosition)}
         >
            <Animated.View style={rootViewStyle} >
 
@@ -86,7 +86,7 @@ export default function Main(props : any){
           style={{height: theme.size.height *.25,
             paddingLeft: 6,
           width: theme.size.width * .5}}
-          onPress={()=>marker_on_press(coordinate,setRoute, userPosition)}
+          onPress={()=>marker_on_press(coordinate,state, userPosition)}
           >
              <View shadow={practiceShadow}>
               <View style={styles.callout}>
@@ -137,16 +137,31 @@ export default function Main(props : any){
 
 }
 
-function marker_on_press(coordinate : any,setRoute : any, userPosition : {longitude: number, latitude: number}){
-    
-    api.route((result: [])=>{
-        setRoute(result);
-        console.log('eco');
-        
-      },{ 
-      fromCoordinates : {longitude: userPosition.longitude, latitude: userPosition.latitude}, 
-      toCoordinates : {longitude: coordinate.longitude, latitude:coordinate.latitude} 
+function marker_on_press(coordinate : any,state : any, userPosition : {longitude: number, latitude: number}){
+   const {setDirection } = state;
+
+  interface RoutesInterface{
+    total_distance: number,
+    duration: number,
+    steps: {latitude: number, longitude: number}[],
+    maneuver: {
+      type: string,
+      modifier: string,
+      distance: number,
+    }[],
+  }
+  
+  api.route((result: RoutesInterface)=>{
+    setDirection({
+      steps: result.steps,
+      total_distance: result.total_distance,
+      duration: result.duration,
+      maneuver: result.maneuver,
     })
+    },{ 
+    fromCoordinates : {longitude: userPosition.longitude, latitude: userPosition.latitude}, 
+    toCoordinates : {longitude: coordinate.longitude, latitude:coordinate.latitude} 
+  })
 }
 
 const styles = StyleSheet.create({
