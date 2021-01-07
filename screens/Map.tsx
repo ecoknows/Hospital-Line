@@ -6,12 +6,14 @@ import {Mark, AnimatedLine, Text, View, Pic, List} from '../components';
 import {theme} from '../constants';
 import { firebase_get_nearest_map_coords } from "../database/Firebase";
 import moment from 'moment';
+import { readable_time } from "../constants/theme";
 
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = theme.size.width * 0.8;
 let start = false;
 let current_index = -1;
 let user_pos = {latitude: 0, longitude: 0};
+let latest_coords = {latitude: 0, longitude: 0};
 let map_pos = {
     latitude: 0, 
     longitude: 0,
@@ -137,7 +139,7 @@ function Main(){
             )}
             
         </MapView>
-       {isdirection ? <ShowDirection setIsDirection={setIsDirection} direction={direction}/> : null} 
+       {isdirection ? <ShowDirection state={{setIsDirection, setDirection}} direction={direction}/> : null} 
 
           
         
@@ -148,8 +150,21 @@ function Main(){
 
 
 function ShowDirection(props){
-  const { setIsDirection, direction} = props;
+  const { state, direction} = props;
+  const { setIsDirection, setDirection} = state;
   const { duration, maneuver } = direction;
+  const [select,setSelect] = useState(-1);
+
+  interface RoutesInterface{
+    total_distance: number,
+    duration: number,
+    steps: {latitude: number, longitude: number}[],
+    maneuver: {
+      type: string,
+      modifier: string,
+      distance: number,
+    }[],
+  }
 
   const TopViewItem =(props)=>{
     const{ item, index} = props;
@@ -171,7 +186,49 @@ function ShowDirection(props){
       </View>
     )
   }
-  
+  useEffect(()=>{
+    switch(select){
+      case 0:
+        api.route_foot((result: RoutesInterface)=>{
+          setDirection({
+            steps: result.steps,
+            total_distance: result.total_distance,
+            duration: result.duration,
+            maneuver: result.maneuver,
+          })
+          },{ 
+          fromCoordinates : {longitude: user_pos.longitude, latitude: user_pos.latitude}, 
+          toCoordinates : {longitude: latest_coords.longitude, latitude: latest_coords.latitude} 
+        })
+        break;
+      case 1:
+        api.route_car((result: RoutesInterface)=>{
+          setDirection({
+            steps: result.steps,
+            total_distance: result.total_distance,
+            duration: result.duration,
+            maneuver: result.maneuver,
+          })
+          },{ 
+          fromCoordinates : {longitude: user_pos.longitude, latitude: user_pos.latitude}, 
+          toCoordinates : {longitude: latest_coords.longitude, latitude: latest_coords.latitude} 
+        })
+        break;
+      case 2:
+      api.route_bike((result: RoutesInterface)=>{
+        setDirection({
+          steps: result.steps,
+          total_distance: result.total_distance,
+          duration: result.duration,
+          maneuver: result.maneuver,
+        })
+        },{ 
+        fromCoordinates : {longitude: user_pos.longitude, latitude: user_pos.latitude}, 
+        toCoordinates : {longitude: latest_coords.longitude, latitude: latest_coords.latitude} 
+      })
+      break;
+    }
+  }, [select])
 
   return(
     
@@ -191,7 +248,7 @@ function ShowDirection(props){
               src={require('../assets/icons/map_nav_dir.png')}
               marginBottom={5}
             />
-            <Text roboto color='#6C6C6C' size={14} style={{marginBottom: theme.size.margin * 3}}>duration</Text>
+            <Text roboto color='#6C6C6C' size={14} style={{marginBottom: theme.size.margin * 3}}>{readable_time(duration)}</Text>
 
             <List
               data={maneuver}
@@ -202,14 +259,20 @@ function ShowDirection(props){
           </View>
       </View>
       <View flex={false} row style={{alignSelf: 'flex-start', marginLeft: theme.size.margin * 4, marginTop: theme.size.margin*2}}>
-        <View flex={false} center middle touchable style={{height: 50, width: 50, backgroundColor: 'white', borderRadius: 10, marginRight: 8}}>
+        <View flex={false} center middle touchable style={{height: 50, width: 50, backgroundColor:select == 0 ? '#678FF5': 'white', borderRadius: 10, marginRight: 8}}
+           press={()=>setSelect(0)}
+        >
         
            <Pic src={require('../assets/icons/bike.png')} />
         </View>
-        <View flex={false} center middle touchable style={{height: 50, width: 50, backgroundColor: '#678FF5', borderRadius: 10, marginRight: 8}}>
+        <View flex={false} center middle touchable style={{height: 50, width: 50, backgroundColor: select == 1 ? '#678FF5': 'white', borderRadius: 10, marginRight: 8}}
+         press={()=>setSelect(1)}
+        >
            <Pic src={require('../assets/icons/car.png')} />
         </View>
-        <View flex={false} center middle touchable style={{height: 50, width: 50, backgroundColor: 'white', borderRadius: 10, marginRight: 8}}>
+        <View flex={false} center middle touchable style={{height: 50, width: 50, backgroundColor: select == 2 ? '#678FF5': 'white', borderRadius: 10, marginRight: 8}}
+         press={()=>setSelect(2)}
+        >
         
            <Pic src={require('../assets/icons/walk.png')} />
         </View>
@@ -269,6 +332,7 @@ function Places(props){
               coordinate={{latitude: geopoint.U, longitude: geopoint.k}}
               userPosition={{longitude: user_pos.longitude, latitude: user_pos.latitude}}
               image={require('../assets/icons/marker.png')}
+              latest_coords={latest_coords}
               distance={dis}
               availability={item.availability}
               state={state}

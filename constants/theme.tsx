@@ -290,71 +290,75 @@ export function readable_time(seconds : number){
   let result : string = '';
   let stat : number = 0;
   
-  if(seconds / 31556926 > 0){
+  if(seconds / 31556926 >= 1){
+    console.log('ecasd ' + seconds / 31556926);
     let x = Math.trunc(seconds / 31556926 )
     seconds -= 31556926;
-    result += (x + ' year' + (x > 0) ? 's and' : ' and')
+    result += (x + ' year' + (x > 1) ? 's and ' : ' and ')
     stat++;
     if(stat == 2 || seconds <= 0)
-      return result += (x + ' year' + (x > 0) ? 's' : '')
+      return result + (x + ' year') + ((x > 1) ? 's' : '')
     else 
-      result += (x + ' year' + (x > 0) ? 's and' : ' and')
+      result + (x + ' year') + ((x > 1) ? 's and ' : ' and ')
   }
 
-  if(seconds / 2629743.83 > 0){
+  if(seconds / 2629743.83 >= 1){
     let x = Math.trunc(seconds / 2629743.83 )
     seconds -= 2629743.83;
     stat++;
     if(stat == 2 || seconds <= 0)
-      return result += (x + ' month' + (x > 0) ? 's' : '')
+      return result + (x + ' month') + ((x > 1) ? 's' : '')
     else 
-      result += (x + ' month' + (x > 0) ? 's and' : ' and')
+      result += (x + ' month') + ((x > 1) ? 's and ' : ' and ')
   }
   
-  if(seconds / 604800  > 0){
+  if(seconds / 604800  >= 1){
     let x = Math.trunc(seconds / 604800  )
     seconds -= 604800;
     stat++;
     if(stat == 2 || seconds <= 0)
-      return result += (x + ' week' + (x > 0) ? 's' : '')
+      return result + (x + ' week') + ((x > 1) ? 's' : '')
     else 
-      result += (x + ' week' + (x > 0) ? 's and' : ' and')
+      result += (x + ' week' ) + ((x > 1) ? 's and ' : ' and ')
   }
 
-  if(seconds / 86400  > 0){
+  if(seconds / 86400 >= 1){
     let x = Math.trunc(seconds / 86400  )
     seconds -= 86400;
     stat++;
     if(stat == 2 || seconds <= 0)
-      return result += (x + ' day' + (x > 0) ? 's' : '')
+      return result + (x + ' day') + ((x > 1) ? 's' : '')
     else 
-     result += (x + ' day' + (x > 0) ? 's and' : ' and')
+     result += (x + ' day') + ((x > 1) ? 's and ' : ' and ')
   }
 
-  if(seconds / 3600  > 0){
+  if(seconds / 3600  >= 1){
     let x = Math.trunc(seconds / 3600)
-    seconds -= 3600;
+    seconds -= 3600 * x;
     stat++;
     if(stat == 2 || seconds <= 0)
-      return result += (x + ' hour' + (x > 0) ? 's' : '')
+      return result + x + ' hour' + ((x > 1) ? 's' : '')
     else 
-      result += (x + ' hour' + (x > 0) ? 's and' : ' and' )
+      result += (x + ' hour') + ((x > 1) ? 's and ' : ' and ' )
   }
   
-  if(seconds / 60  > 0){
-    seconds -= 60;
+  if(seconds / 60  >= 1){
+    
     let x = Math.trunc(seconds / 60)
+    seconds -= 60 * x;
     stat++;
     if(stat == 2 || seconds <= 0)
-      return result += (x + ' minute' + (x > 0) ? 's' : '')
+      return result + x + ' minute' + ( (x > 1) ? 's' : '' )
     else 
-      result += (x + ' minute' + (x > 0) ? 's and' : ' and')
+      result += (x + ' minute') + ((x > 1) ?'s and ' : ' and ')
   }
 
-  if(seconds / 60  < 0){
-    result += seconds + ' second'
+  
+  if(Math.trunc(seconds / 60)  <= 1){
+    result += Math.trunc(seconds) + ' second'
   }
  
+  console.log(result);
   return result;
 }
 

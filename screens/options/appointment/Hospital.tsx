@@ -28,17 +28,6 @@ const box_shadow = {
   y:1,
   style:{marginLeft: 6}
 }
-/*
-const options = [
-  {title: 'Gynecology' , image: require('../../../assets/icons/gynecology.png')},
-  {title: 'Gastroenterology' , image: require('../../../assets/icons/Gastroenterology.png')},
-  {title: 'Dental' , image: require('../../../assets/icons/tooth.png')},
-  {title: 'Orthopedic' , image: require('../../../assets/icons/Orthopedic.png')},
-  {title: 'General Medicine' , image: require('../../../assets/icons/General_Medicine.png')},
-  {title: 'Pediatrician' , image: require('../../../assets/icons/Pediatrician.png')},
-  {title: 'cake' , image: require('../../../assets/icons/cake.png')},
-  {title: 'heart' , image: require('../../../assets/icons/heart.png')},
-]*/
 function Main({navigation}){
   const { hospital } = useSelector((state: RootState) => state.hospital)
 
@@ -51,6 +40,7 @@ function Main({navigation}){
   }
   
   const BoxShadow = props => {
+    const { item } = props;
     const anim = useRef(new Animated.Value(0)).current;
     const color = anim.interpolate({
       inputRange: [0,1],
@@ -64,7 +54,9 @@ function Main({navigation}){
         duration: 500,
         useNativeDriver: false,
       }).start(({ finished }) => {
-        navigation.navigate('DoctorList');
+        console.log(' wazap : ', hospital.id, ' ' , item.title);
+        
+        navigation.navigate('DoctorList', { departmentStorage : { collection:'Hospitals', id: hospital.id, department: item.title} });
       });
   
     }
@@ -97,7 +89,7 @@ function Main({navigation}){
       <List
         numColumns={2}
         data={data}
-        renderItem={({item}) =>  <BoxShadow src={item.image} >{item.title}</BoxShadow>}
+        renderItem={({item}) =>  <BoxShadow src={item.image} item={item} >{item.title}</BoxShadow>}
         keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 100, paddingTop: 20}}

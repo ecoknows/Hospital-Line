@@ -58,6 +58,20 @@ export async function firebase_get_collection(collection){
     }
 }
 
+export async function firebase_get_doctors(item){
+    try{
+      const data = await firebase.firestore()
+      .collection(item.collection)
+      .doc(item.id)
+      .collection(item.department)
+      .get();
+  return data.docs.map(doc => {return { id : doc.id, ...doc.data()}});
+    }catch{
+
+    }
+}
+
+
 export async function firebase_search(collection,text){
     try{
       const data = await firebase.firestore()
@@ -73,6 +87,23 @@ export async function firebase_search(collection,text){
     }
 }
 
+
+export async function firebase_search_doctors(item,text){
+    try{
+      const data = await firebase.firestore()
+            .collection(item.collection)
+            .doc(item.id)
+            .collection(item.department)
+            .orderBy("search")
+            .startAt(text)
+            .endAt(text+"\uf8ff")
+            .get();
+            
+        return data.docs.map(doc => {return { id : doc.id, ...doc.data()}});
+    }catch{
+
+    }
+}
 
 export function TestFirebase(){
     firebase.firestore()

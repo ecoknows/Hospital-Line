@@ -17,10 +17,10 @@ const updateClinicDepartmentSuccess : ActionCreator<ClinicDepartmentTypes> = (da
 }
 
 
-export function updateHospitalDepartment({departments, name}:{departments: number[], name: string}){
+export function updateHospitalDepartment({id, departments, name}:{ id: string, departments: number[], name: string}){
     return dispatch => {
         dispatch(request());
-        return appointmentService.updateDepartment({departments, name})
+        return appointmentService.updateDepartment({id, departments, name})
         .then(
             response=>{
                 dispatch(updateHospitalDepartmentSuccess(response))
@@ -32,10 +32,10 @@ export function updateHospitalDepartment({departments, name}:{departments: numbe
     }
 }
 
-export function updateCliniclDepartment({departments, name}:{departments: number[], name: string}){
+export function updateCliniclDepartment({id, departments, name}:{id, departments: number[], name: string}){
     return dispatch => {
         dispatch(request());
-        return appointmentService.updateDepartment({departments, name})
+        return appointmentService.updateDepartment({id, departments, name})
         .then(
             response=>{
                 dispatch(updateClinicDepartmentSuccess(response))

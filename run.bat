@@ -1,4 +1,1 @@
-@echo off
-expo start
-
-@pause
+start cmd /k expo start

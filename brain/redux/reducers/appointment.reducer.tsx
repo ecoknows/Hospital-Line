@@ -10,6 +10,7 @@ interface clinicStates{
 
 const initialStateHospital: hospitalStates = {
     hospital : {
+      id: '',
       name: '',
       departments: [],
    }
@@ -19,6 +20,7 @@ const initialStateHospital: hospitalStates = {
 
 const initialStateClinic: clinicStates = {
   clinic : {
+    id: '',
     name: '',
     departments: [],
  }

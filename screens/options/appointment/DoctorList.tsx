@@ -2,7 +2,7 @@ import React, {useRef, useLayoutEffect, useState, useEffect} from 'react';
 import { StyleSheet, Dimensions,TouchableWithoutFeedback, Animated, Keyboard } from 'react-native';
 import { View, Pic, List, Text, Input } from '../../../components';
 import { theme } from '../../../constants';
-import { firebase_get_collection , firebase_search} from '../../../database/Firebase';
+import { firebase_get_collection , firebase_get_doctors, firebase_search, firebase_search_doctors} from '../../../database/Firebase';
 
 const title_shadow = {
     width: theme.size.width * .8,
@@ -64,9 +64,9 @@ function Doctors(props){
 }
 
 function SearchBox(props){
-    const { setData } = props
+    const { setData, departmentStorage} = props
+    const { collection, id, department} = departmentStorage
     const anim = useRef(new Animated.Value(0)).current;
-
 
     const fadeAnim =()=>{
         Animated.timing(anim,{
@@ -88,7 +88,7 @@ function SearchBox(props){
                     style={styles.input}
                     onChangeText={text => {
                         
-                        firebase_search("Dental",text).then((data: any)=>{
+                        firebase_search_doctors({ collection, id, department},text.toLowerCase()).then((data: any)=>{
                             setData(data)
                         })
 
@@ -103,17 +103,24 @@ function SearchBox(props){
     );
 }
 
-function Main({navigation}){
+function Main({navigation, route}){
     const [is_search, setIs_search] = useState(false);
     const [data, setData] = useState([]);
     
     useEffect(()=>{
-        firebase_get_collection("Dental").then((data:any)=>setData(data))
+
+        if(route.params?.departmentStorage){
+            const {collection, id, department} = route.params.departmentStorage;
+            firebase_get_doctors({collection, id, department}).then((data:any)=>setData(data))
+        }
+
+
+
         const keyboardListener = Keyboard.addListener('keyboardDidHide', ()=>{
             setIs_search(false);
         });
         return () => {keyboardListener.remove()}
-    },[]);
+    },[route]);
 
     useLayoutEffect(()=>{
         navigation.setOptions({
@@ -128,7 +135,7 @@ function Main({navigation}){
 
 
                 {
-                    is_search ? <SearchBox setData={setData} /> : null
+                    is_search ? <SearchBox setData={setData} departmentStorage={route.params.departmentStorage} /> : null
                 }
                 
             </View>,

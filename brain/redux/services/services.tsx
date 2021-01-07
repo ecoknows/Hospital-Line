@@ -5,9 +5,9 @@ export const appointmentService = {
     updateHomeBtn,
 };
 
-async function updateDepartment({departments, name}: {departments: number[], name: string}): Promise<DepartmentInterface> {
+async function updateDepartment({id, departments, name}: {id:string, departments: number[], name: string}): Promise<DepartmentInterface> {
     // return await getFromServer('/api/'
-    return {departments, name}
+    return {id, departments, name}
 }
 async function updateHomeBtn(status: boolean): Promise<boolean> {
     // return await getFromServer('/api/'

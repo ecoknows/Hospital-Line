@@ -39,7 +39,7 @@ export default function Main(props : any){
       coordinate, 
       userPosition,
       state,
-      children,
+      latest_coords,
       image, 
       imageStyle, 
       user,
@@ -86,7 +86,10 @@ export default function Main(props : any){
           style={{height: theme.size.height *.25,
             paddingLeft: 6,
           width: theme.size.width * .5}}
-          onPress={()=>marker_on_press(coordinate,state, userPosition)}
+          onPress={()=>{ 
+            latest_coords.longitude = coordinate.longitude;
+            latest_coords.latitude = coordinate.latitude;
+            marker_on_press(coordinate,state, userPosition)}}
           >
              <View shadow={practiceShadow}>
               <View style={styles.callout}>
@@ -151,7 +154,7 @@ function marker_on_press(coordinate : any,state : any, userPosition : {longitude
     }[],
   }
   
-  api.route((result: RoutesInterface)=>{
+  api.route_car((result: RoutesInterface)=>{
     setDirection({
       steps: result.steps,
       total_distance: result.total_distance,

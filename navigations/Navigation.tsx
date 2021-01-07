@@ -18,7 +18,7 @@ import {
 } from '../screens';
 import {StyleSheet, Dimensions, Keyboard} from 'react-native';
 import { Pic, View, Text, Input, List} from '../components';
-import { firebase_get_collection, firebase_search } from '../database/Firebase';
+import { firebase_get_collection} from '../database/Firebase';
 import Appointment from '../screens/options/appointment/Appointment';
 import {useSelector} from 'react-redux';
 import { RootState } from '../brain/redux';

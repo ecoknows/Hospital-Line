@@ -68,6 +68,8 @@ const Main = ({navigation}) => {
                   
                    setSearch(false);
                    setDepartment(item);
+                   console.log(item , ' etaes');
+                   
                    if(status == 'Hospitals')
                     dispatch(updateHospitalDepartment(item))
                    else
