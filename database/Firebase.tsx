@@ -88,6 +88,7 @@ export async function firebase_search(collection,text){
 }
 
 
+
 export async function firebase_search_doctors(item,text){
     try{
       const data = await firebase.firestore()
@@ -104,6 +105,25 @@ export async function firebase_search_doctors(item,text){
 
     }
 }
+
+export async function firebase_time_doctor_info(item){
+    try{
+        const data = await firebase.firestore()
+            .collection('Hospitals')
+            .doc(item.hospital)
+            .collection(item.department)
+            .doc(item.doc_id)
+            .collection(item.date_available)
+            .get();
+
+        
+            
+        return data.docs.map(doc => {return { time : doc.id, ...doc.data()}});
+    }catch{
+
+    }
+}
+
 
 export function TestFirebase(){
     firebase.firestore()

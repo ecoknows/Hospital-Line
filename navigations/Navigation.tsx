@@ -133,7 +133,7 @@ home_style: {
   height: theme.size.height * 0.07,
   position: 'absolute',
   bottom: 0,
-  backgroundColor: 'transparent',
+  backgroundColor: 'white',
   borderTopColor: '#C1C1C1',
   borderWidth: 0.5
 },

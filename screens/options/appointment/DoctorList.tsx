@@ -21,7 +21,7 @@ const title_shadow = {
     }
 }
 function Doctors(props){
-    const { item, index, navigation } = props;
+    const { item, index, navigation , department} = props;
     
     const anim = useRef(new Animated.Value(0.5)).current;
     const color = anim.interpolate({
@@ -36,7 +36,7 @@ function Doctors(props){
             duration: 500,
             useNativeDriver: false,
         }).start(({ finished }) => {
-            navigation.navigate('DoctorClick', item);
+            navigation.navigate('DoctorClick', {department,...item});
         });
     }
 
@@ -103,18 +103,21 @@ function SearchBox(props){
     );
 }
 
+interface Doctor{
+    id: string,
+    firstname: string,
+    lastname: string,
+    middle_initial: string,
+}
+
 function Main({navigation, route}){
     const [is_search, setIs_search] = useState(false);
-    const [data, setData] = useState([]);
-    
+    const [data, setData] = useState<Doctor[]>();
+    const {collection, id, department} = route.params.departmentStorage;
+
     useEffect(()=>{
 
-        if(route.params?.departmentStorage){
-            const {collection, id, department} = route.params.departmentStorage;
-            firebase_get_doctors({collection, id, department}).then((data:any)=>setData(data))
-        }
-
-
+        firebase_get_doctors({collection, id, department}).then((data:any)=>setData(data));
 
         const keyboardListener = Keyboard.addListener('keyboardDidHide', ()=>{
             setIs_search(false);
@@ -147,7 +150,7 @@ function Main({navigation, route}){
             <List
                 showsVerticalScrollIndicator={false}
                 data={data}
-                renderItem={({item, index})=> <Doctors item={item} index={index} navigation={navigation}/>}
+                renderItem={({item, index})=> <Doctors item={item} index={index} navigation={navigation} department={department}/>}
                 keyExtractor={(item,index) => index.toString()}
                 contentContainerStyle={{paddingTop: theme.size.padding * 2}}
             />

@@ -8,7 +8,8 @@ function Main(props){
     } = props;
 
     const listStyle = [
-        styles.list
+        styles.list,
+        style
     ];
 
     return (

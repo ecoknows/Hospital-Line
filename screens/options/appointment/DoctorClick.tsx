@@ -1,7 +1,11 @@
-import React, { useRef, useState } from 'react';
-import { StyleSheet, Dimensions, Animated, Easing } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { StyleSheet, Animated, Easing } from 'react-native';
 import { Pic, View, Text, List, Input, Button } from '../../../components';
 import { theme } from '../../../constants';
+import { firebase_time_doctor_info } from '../../../database/Firebase';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../brain/redux';
+import moment from 'moment';
 
 const title_shadow = {
     width: theme.size.width * .17,
@@ -32,9 +36,22 @@ const test_data = [
 
 function Main({navigation, route}){
     const anim = useRef( new Animated.Value(theme.size.height * .55)).current;
-    const { firstname, lastname, middle_initial } = route.params;
+    const { id ,firstname, lastname, middle_initial,department,date_available } = route.params;
     const name = "Dr. " + firstname + " "+ middle_initial + ". " + lastname;
     const [time_click, setTime_click] = useState('');
+    const [time_data, setTimeData] = useState([]);
+    const [dateSelected, setDateSelected] = useState(0)
+    const { hospital } = useSelector((state: RootState) => state.hospital)
+    useEffect(() => {
+        
+        firebase_time_doctor_info({
+            hospital: hospital.id,
+            department,
+            date_available:date_available[dateSelected],
+            doc_id: id,}).then((response: any)=>{
+                setTimeData(response)
+            })
+    }, [dateSelected])
 
     const openBottom =(item)=> {
         Animated.timing(anim,{
@@ -58,29 +75,51 @@ function Main({navigation, route}){
                 </View>
             </View>
 
-            <View flex={false} row marginTop={theme.size.padding * 4}>
+            <List
+                data={date_available}
+                horizontal
+                style={{
+                    flexGrow:0,
+                    marginTop: theme.size.padding * 4,
+                    width: '100%',
+
+                }}
+                contentContainerStyle={{paddingLeft: date_available.length == 1 ?'25%' : 0}}
+                keyExtractor={(item,index)=>index.toString()}
+                renderItem={({item,index})=>
+                        <View touchable center middle style={ index == dateSelected ? styles.box_select : styles.box}
+                        
+                        press={()=>setDateSelected(index)}
+                        >
+                            <Text avarage_sans style={index == dateSelected ? styles.date_select : styles.date}>{item}</Text>
+                        </View>
+                }   
+            />
+            {/* <View flex={false} row marginTop={theme.size.padding * 4}>
                 <View center middle style={styles.box}>
                     <Text avarage_sans style={styles.date}>Sunday</Text>
                 </View>
                 <View  center middle style={styles.box}>
                     <Text avarage_sans style={styles.date}>Monday</Text>
                 </View>
-            </View>
+            </View> */}
 
             <View middle paddingTop={theme.size.padding * 2}>
                 <Text roboto style={{fontSize: 17, marginVertical: theme.size.margin * 5, color:'#2B2B2B'}}>Pick a time</Text>
 
                 <List
-                    data={test_data}
+                    data={time_data}
                     numColumns={3}
+                    showsVerticalScrollIndicator={false}
                     contentContainerStyle={{paddingLeft: 5, paddingTop: 5}}
                     keyExtractor={(item, index)=> index.toString()}
                     renderItem={({item,index})=>
-                    <View flex={false} touchable shadow={title_shadow} center middle style={styles.circle} backgroundColor={item.color}
+                    <View flex={false} touchable shadow={title_shadow} center middle style={styles.circle} 
+                    backgroundColor= {item.availability ? '#1DA6FD': 'white'}
                         press={()=>openBottom(item)}
                     >
-                        <Text avarage_sans style={{color: item.textColor}}>{item.time}</Text>
-                        <Text avarage_sans style={{color: item.textColor}}>{item.ampm}</Text>
+                        <Text avarage_sans style={{color: item.availability ? 'white': 'black'}}>{moment(item.time, 'HH:mm').format('h:mm')}</Text>
+                        <Text avarage_sans style={{color: item.availability ? 'white': 'black'}}>{moment(item.time, 'HH:mm').format('A')}</Text>
                     </View>
                     }
                 />
@@ -160,6 +199,10 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: '#1DA6FD'
     },
+    date_select:{
+        fontSize: 15,
+        color: 'white'
+    },
     name:{
         fontSize: 18,
     },
@@ -171,6 +214,14 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderColor: '#1DA6FD',
         paddingVertical: 10,
+        width: theme.size.width * .41
+    },
+    box_select:{
+        borderWidth: 0.5,
+        borderColor: '#1DA6FD',
+        backgroundColor:'#1DA6FD',
+        paddingVertical: 10,
+        width: theme.size.width * .41
     },
     circle: {
         height : 83,
