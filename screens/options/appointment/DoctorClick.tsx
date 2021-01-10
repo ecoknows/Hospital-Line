@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, Animated, Easing } from 'react-native';
 import { Pic, View, Text, List, Input, Button } from '../../../components';
 import { theme } from '../../../constants';
-import { firebase_time_doctor_info } from '../../../database/Firebase';
+import { firebase_time_doctor_add_contact, firebase_time_doctor_info } from '../../../database/Firebase';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../brain/redux';
 import moment from 'moment';
@@ -43,14 +43,13 @@ function Main({navigation, route}){
     const [dateSelected, setDateSelected] = useState(0)
     const { hospital } = useSelector((state: RootState) => state.hospital)
     useEffect(() => {
-        
         firebase_time_doctor_info({
             hospital: hospital.id,
             department,
             date_available:date_available[dateSelected],
             doc_id: id,}).then((response: any)=>{
                 setTimeData(response)
-            })
+        })
     }, [dateSelected])
 
     const openBottom =(item)=> {
@@ -59,7 +58,7 @@ function Main({navigation, route}){
             duration: 1000,
             useNativeDriver: false,
         }).start(()=>{
-            setTime_click(item.time+' '+item.ampm)
+            setTime_click(item.time)
         });
     }
     return(
@@ -95,14 +94,6 @@ function Main({navigation, route}){
                         </View>
                 }   
             />
-            {/* <View flex={false} row marginTop={theme.size.padding * 4}>
-                <View center middle style={styles.box}>
-                    <Text avarage_sans style={styles.date}>Sunday</Text>
-                </View>
-                <View  center middle style={styles.box}>
-                    <Text avarage_sans style={styles.date}>Monday</Text>
-                </View>
-            </View> */}
 
             <View middle paddingTop={theme.size.padding * 2}>
                 <Text roboto style={{fontSize: 17, marginVertical: theme.size.margin * 5, color:'#2B2B2B'}}>Pick a time</Text>
@@ -124,13 +115,26 @@ function Main({navigation, route}){
                     }
                 />
             </View>
-            <BottomClick anim={anim} time_click={time_click}/>
+            <BottomClick anim={anim} time_click={time_click} 
+                book_needed={
+                    {
+                        hospital: hospital.id, 
+                        department,
+                        date_available: date_available[dateSelected], 
+                        doc_id: id,
+                    }
+                }
+                    
+            />
         </View>
     )
 }
 
 function BottomClick(props){
-    const { anim, time_click} = props
+    const { anim, time_click,book_needed} = props
+    const { hospital, department,date_available, doc_id} = book_needed
+    const [contact, setContact] = useState('')
+    const [name, setName] = useState('')
     
     const closeBottom =()=> {
         Animated.timing(anim,{
@@ -139,6 +143,17 @@ function BottomClick(props){
             easing: Easing.linear,
             useNativeDriver: false,
         }).start();
+    }
+
+    const book =()=> {
+        firebase_time_doctor_add_contact({
+            hospital,
+            department,
+            date_available,
+            doc_id,
+            time_click
+        },{contact,name});
+        closeBottom()
     }
 
     return(
@@ -166,18 +181,22 @@ function BottomClick(props){
             <Input
                     placeholder="Enter your name"
                     style={styles.in_name}
+                    value={name}
+                    onChangeText={text => setName(text)}
                 />
 
             <Input
                 placeholder="Enter your phone number"
                 style={styles.in_phone}
+                value={contact}
+                onChangeText={text => setContact(text)}
             />
             <View row center marginTop={theme.size.margin*7 }> 
             
-                <Button style={styles.cncl_btn}>
+                <Button style={styles.cncl_btn} press={closeBottom}>
                     <Text open_sans style={{fontSize: 18}}>Cancel</Text>
                 </Button>
-                <Button style={styles.book_btn}>
+                <Button style={styles.book_btn} press={book}>
                     <Text open_sans style={{fontSize: 18, fontWeight: 'bold', color: 'white'}}>Book</Text>
                 </Button>
 

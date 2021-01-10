@@ -47,12 +47,31 @@ export function firebase_add_hospital_on_map(){
 }
 
 
+export function firebase_time_doctor_add_contact(item, user){
+    firebase.firestore()
+        .collection('Hospitals')
+        .doc(item.hospital)
+        .collection(item.department)
+        .doc(item.doc_id)
+        .collection(item.date_available)
+        .doc(item.time_click)
+        .collection('Contacts')
+        .doc(user.contact)
+        .set({
+            Name: user.name
+        });
+}
+
 export async function firebase_get_collection(collection){
     try{
       const data = await firebase.firestore()
             .collection(collection)
             .get();
-        return data.docs.map(doc => {return { id : doc.id, ...doc.data()}});
+        return {
+           data:  data.docs.map(doc => {return { id : doc.id, ...doc.data()}}),
+           document: await firebase.firestore()
+           .collection(collection)
+        }
     }catch{
 
     }
@@ -74,6 +93,8 @@ export async function firebase_get_doctors(item){
 
 export async function firebase_search(collection,text){
     try{
+        console.log(text == '');
+        text = text == '' ? '.' : text;
       const data = await firebase.firestore()
             .collection(collection)
             .orderBy("search")

@@ -5,7 +5,7 @@ import {createStore} from 'redux';
 import {useDispatch} from 'react-redux';
 import {Hospital, Clinic} from '../../../screens';
 import {StyleSheet, Keyboard} from 'react-native';
-import { Pic, View, Text, Input, List} from '../../../components';
+import { Pic, View, Text, Input, List, Button} from '../../../components';
 import { firebase_get_collection, firebase_search } from '../../../database/Firebase';
 import { updateCliniclDepartment, updateHospitalDepartment } from '../../../brain/redux/actions/appointment.actions';
 
@@ -45,26 +45,21 @@ const Main = ({navigation}) => {
   const dispatch = useDispatch();
 
   useEffect(()=>{
-    const keyboardListenerShow = Keyboard.addListener('keyboardDidShow', ()=>{
-        setSearch(true);
+    const keyboardListenerHide = Keyboard.addListener('keyboardDidHide', ()=>{
+      setSearch(false);
     });
-    
-    return () => {keyboardListenerShow.remove()}
+    return () => { keyboardListenerHide.remove()}
   },[])
-
-  useEffect(()=>{
-    firebase_get_collection(status).then((data:any)=>setData(data));
-  },[status])
-  
-
   function SearchItems(){
     return(  
       <View shadow={box_shadow_search} white paddingVertical={10}>
         <List
           data={data}
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps={'always'} 
           renderItem={({index, item})=>  
             <View flex={false} borderColor='rgba(196,196,196,0.2)' borderTopWidth={index == 0 ? 1: 0 } borderBottomWidth={1}>  
-                <View touchable style={{flex:1, paddingVertical: 5}} middle press={()=>{
+                <View touchable style={{flex:1, paddingVertical: 5, zIndex:100}} middle press={()=>{
                   
                    setSearch(false);
                    setDepartment(item);
@@ -100,6 +95,11 @@ const Main = ({navigation}) => {
                               onChangeText={text => {
                                 firebase_search(status,text.toLowerCase()).then((data: any)=>{
                                     setData(data)
+                                    if(data.length != 0)
+                                      setSearch(true);
+                                    if(data.length == 0)
+                                      setSearch(false);
+                                    
                                 })
         
                             }}
