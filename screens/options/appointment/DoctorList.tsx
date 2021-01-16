@@ -126,16 +126,9 @@ function Main({navigation}){
             <View flex={false}  style={styles.search} >
                 <Pic
                 touchable
-                press={()=>{
-                    setIs_search(true);
-                }}
+                press={()=>{setIs_search(true);}}
                 src={require('../../../assets/icons/search.png')}/>
-
-
-                {
-                    is_search ? <SearchBox/> : null
-                }
-                
+                {is_search ? <SearchBox/> : null}               
             </View>,
         });
     },[navigation,is_search]);

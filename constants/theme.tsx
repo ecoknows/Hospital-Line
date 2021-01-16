@@ -247,8 +247,9 @@ const size = {
 };
 
 const color = {
+    white: "#FFFFFF",
     semi_black: '#404040',
-    purple: '#3B58B5',
+    purple: '#6A59B7',
     gray : '#7A7A7A',
     light_gray: '#8B8B8B',
     light_blue : '#1DA6FD',
@@ -267,7 +268,8 @@ const home_style =  {
     position: 'absolute',
     bottom: 0,
     borderTopColor: '#C1C1C1',
-    borderWidth: 0.5
+    borderTopWidth: 0.5,
+    backgroundColor: color.white,
 };
 
 

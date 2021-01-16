@@ -17,7 +17,7 @@ const title_shadow = {
 const options = [
   {title: 'Gynecology' , image: require('../../../assets/icons/gynecology.png')},
   {title: 'Gastroenterology' , image: require('../../../assets/icons/Gastroenterology.png')},
-  {title: 'toot' , image: require('../../../assets/icons/tooth.png')},
+  {title: 'tooth' , image: require('../../../assets/icons/tooth.png')},
   {title: 'Orthopedic' , image: require('../../../assets/icons/Orthopedic.png')},
   {title: 'General Medicine' , image: require('../../../assets/icons/General_Medicine.png')},
   {title: 'Pediatrician' , image: require('../../../assets/icons/Pediatrician.png')},
@@ -77,8 +77,9 @@ function Main({navigation}){
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 100, paddingTop: 20}}
       />
-
+    
     </View>
+    
   )  
 }
 

@@ -7,6 +7,7 @@ import {
   Emergency,
   HealthTips,
   MedicineReminder,
+  AddReminder,
   Notifications,
   Map,
   SplashScreen,
@@ -14,9 +15,9 @@ import {
   DoctorList,
   DoctorClick,
 } from '../screens';
-import {StyleSheet, Dimensions} from 'react-native';
+import {Dimensions} from 'react-native';
 import { Pic, View } from '../components';
-const {width, height} = Dimensions.get('window')
+
 
   
 const dashboard = createStackNavigator();
@@ -78,6 +79,10 @@ function Navigation(){
         <dashboard.Screen
           name='Emergency' component={Emergency} 
           options={{ title: 'Emergency'}} />
+        
+        <dashboard.Screen
+          name='AddReminder' component={AddReminder} 
+          options={{ title: 'Add Reminder', headerShown: false}} />
 
         <dashboard.Screen
           name='Appointment' component={Appointment} 
@@ -107,7 +112,22 @@ function Navigation(){
 
         <dashboard.Screen
           name='MedicineReminder' component={MedicineReminder} 
-          options={{ title: 'Medicine Reminder'}} />
+          options={{ 
+            title: 'Medicine Reminder',
+            headerStyle: {
+            backgroundColor: theme.color.purple,
+
+            elevation: 0, // remove shadow on Android
+            shadowOpacity: 0, // remove shadow on iOS
+            },
+            headerBackImage: ()=><Pic src={require('../assets/icons/back.png')}/>,
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontFamily: theme.font.ARIAL_BOLD,
+              fontWeight: 'bold'
+            },
+            headerTitleAlign: 'center'
+          }} />
         
         <dashboard.Screen
           name='Notifications' component={Notifications} 
@@ -115,26 +135,11 @@ function Navigation(){
 
      </dashboard.Navigator>
      
-     <View center middle style={styles.home_style}>
-        <Pic src={require('../assets/images/Home.png')} t_style={styles.home } touchable press={()=>navigationRef.current?.navigate('Dashboard')} width={80} />
+     <View center middle style={theme.home_style}>
+        <Pic src={require('../assets/images/Home.png')} t_style={theme.home } touchable press={()=>navigationRef.current.navigate('Dashboard')} width={80} />
      </View>
    </NavigationContainer>
  );
 }
 
  export default Navigation;
-
- const styles = StyleSheet.create({
-  home_style: {
-    width,
-    height: height * 0.07,
-    position: 'absolute',
-    bottom: 0,
-    backgroundColor: 'white',
-    borderTopColor: '#C1C1C1',
-    borderWidth: 0.5
-  },
-  home: {
-    top: -25,
-  }
- })

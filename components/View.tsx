@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Animated, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, Animated, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { BoxShadow } from 'react-native-shadow';
 
 export default function Main(props : any){
@@ -13,7 +13,7 @@ export default function Main(props : any){
         center,
         middle,
         flex,
-        flexDirection,
+        alignContent,
         width,
         height,
         row,
@@ -22,6 +22,8 @@ export default function Main(props : any){
         activeOpacity,
         white,
         scroll,
+
+        
 
         ...rest
     } = props
@@ -32,8 +34,8 @@ export default function Main(props : any){
         center && {justifyContent: 'center'},
         middle && {alignItems: 'center'},
 
-        flexDirection == false && { flexDirection : flexDirection},
-        flexDirection && {flexDirection: flexDirection},
+        // alignContent == false && { alignContent : alignContent},
+        // alignContent && {alignContent: alignContent},
 
         flex == false && { flex : 0},
         flex && {flex: flex},

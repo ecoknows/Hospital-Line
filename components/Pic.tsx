@@ -7,6 +7,7 @@ export default function Main(props : any){
     const {
         style,
         src,
+        key,
         touchable,
         press,
         width,
@@ -29,7 +30,7 @@ export default function Main(props : any){
     if(touchable){
         return(
             <TouchableOpacity onPress={press} style={[styles.touch,t_style]}>
-              <Image style={[ styles.image, imageStyle]} source={src} {...rest}/>
+              <Image style={[ styles.image, imageStyle]} key={key} source={src} {...rest}/>
             </TouchableOpacity>
         )
     }

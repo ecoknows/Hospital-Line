@@ -21,6 +21,7 @@ export default function Main(props : any){
         arial_bold,
         avarage_sans,
         semi_black,
+        purple,
 
         ...rest
     } = props
@@ -46,6 +47,7 @@ export default function Main(props : any){
         light_gray && styles.light_gray,
         gray && styles.gray,
         semi_black && styles.semi_black,
+        purple && styles.purple,
 
     ];
 
@@ -73,4 +75,5 @@ const styles = StyleSheet.create({
     gray: {color: theme.color.gray},
     light_gray : {color: theme.color.light_gray},
     semi_black : {color: theme.color.semi_black},
+    purple : {color: theme.color.purple}
 });

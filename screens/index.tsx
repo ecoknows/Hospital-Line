@@ -3,6 +3,8 @@ import SplashScreen from './SplashScreen';
 import Dashboard from './Dashboard'
 import Appointment from './options/appointment/Appointment';
 import Emergency from './options/Emergency';
+import ReminderList from './options/Medicine Reminder/ReminderItem';
+import AddReminder from './options/Medicine Reminder/AddReminder';
 import HealthTips from './options/HealthTips';
 import MedicineReminder from './options/MedicineReminder';
 import Notifications from './options/Notifications';
@@ -16,6 +18,9 @@ export {
     DoctorClick,
     
     Emergency,
+    ReminderList,
+    AddReminder,
+    
     HealthTips,
     MedicineReminder,
     Notifications,

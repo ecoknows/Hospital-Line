@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect} from 'react';
 import { StyleSheet, FlatList} from 'react-native';
 import { Pic, Text, View} from '../components';
 import { BoxShadow } from 'react-native-shadow';
@@ -41,21 +41,17 @@ export default function DashBoard({navigation}){
           data={options}
           renderItem={({item}) => (
             <View touchable press={()=> navigation.navigate(item.route)} style={styles.dashboard_item} center middle>
-              <BoxShadow setting={shadowOpt}>
-              <View style={styles.inside_item}center middle flex={1}>
+              <View style={styles.inside_item} shadow={shadowOpt} center middle flex={1}>
                 <Pic src={item.source} marginBottom={theme.size.margin * 3} />
                 <Text size={theme.size.normal - 2} gray open_sans center>{item.title}</Text>
               </View>    
-              </BoxShadow>
             </View>
           )}
-          
+            
           />
       </View>    
 
-      <View center middle style={theme.home_style} flex={1}>
-      <Pic src={require('../assets/images/Home.png')} style={theme.home } touchable press={()=>navigation.goBack()} width={80} />
-      </View>       
+
     </View>
     
     
@@ -65,7 +61,7 @@ export default function DashBoard({navigation}){
 const styles = StyleSheet.create({
   container:{
     paddingTop: theme.size.padding * 3,
-    backgroundColor: 'white',
+    backgroundColor: theme.color.white,
   },
   bell: {
     alignSelf: 'flex-end',
@@ -76,14 +72,12 @@ const styles = StyleSheet.create({
     padding: theme.size.padding ,
   },
   dashboard_item: {
-    
     height: theme.size.height * .25,
     width: theme.size.normal * 9,  
-
   },
   inside_item:{
     borderRadius: 20,
-    backgroundColor: 'white',
+    backgroundColor: theme.color.white,
     height: theme.size.normal * 9,
     width: theme.size.normal * 9,
   }
