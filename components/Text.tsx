@@ -21,8 +21,9 @@ export default function Main(props : any){
         arial_bold,
         avarage_sans,
         semi_black,
+        color,
         purple,
-
+        
         ...rest
     } = props
 
@@ -39,6 +40,7 @@ export default function Main(props : any){
         size && {fontSize : size},
 
         center && {textAlign: 'center'},
+        color && {color},
 
 
         title && styles.title,

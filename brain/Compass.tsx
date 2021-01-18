@@ -45,7 +45,7 @@ function round(n : any) {
 }
 
 
-export default {
+export {
     start,
     remove,
 }

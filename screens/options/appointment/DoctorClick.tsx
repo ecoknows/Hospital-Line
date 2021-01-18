@@ -1,13 +1,15 @@
-import React, { useRef } from 'react';
-import { StyleSheet, Dimensions, Animated, Easing } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { StyleSheet, Animated, Easing } from 'react-native';
 import { Pic, View, Text, List, Input, Button } from '../../../components';
 import { theme } from '../../../constants';
-
-const { width, height } = Dimensions.get('window');
+import { firebase_time_doctor_add_contact, firebase_time_doctor_info } from '../../../database/Firebase';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../brain/redux';
+import moment from 'moment';
 
 const title_shadow = {
-    width: width * .17,
-    height: height * .08,
+    width: theme.size.width * .17,
+    height: theme.size.height * .08,
     color:"#000",
     border:17,
     radius:30,
@@ -32,16 +34,32 @@ const test_data = [
     {time: '5:50', ampm: 'PM', color: '#1DA6FD',textColor:'white'},
 ]
 
-function Main({navigation}){
-    const anim = useRef( new Animated.Value(height * .55)).current;
+function Main({navigation, route}){
+    const anim = useRef( new Animated.Value(theme.size.height * .55)).current;
+    const { id ,firstname, lastname, middle_initial,department,date_available } = route.params;
+    const name = "Dr. " + firstname + " "+ middle_initial + ". " + lastname;
+    const [time_click, setTime_click] = useState('');
+    const [time_data, setTimeData] = useState([]);
+    const [dateSelected, setDateSelected] = useState(0)
+    const { hospital } = useSelector((state: RootState) => state.hospital)
+    useEffect(() => {
+        firebase_time_doctor_info({
+            hospital: hospital.id,
+            department,
+            date_available:date_available[dateSelected],
+            doc_id: id,}).then((response: any)=>{
+                setTimeData(response)
+        })
+    }, [dateSelected])
 
-    const openBottom =()=> {
+    const openBottom =(item)=> {
         Animated.timing(anim,{
             toValue: 0,
             duration: 1000,
-            easing: Easing.linear,
             useNativeDriver: false,
-        }).start();
+        }).start(()=>{
+            setTime_click(item.time)
+        });
     }
     return(
         <View white paddingHorizontal={theme.size.padding * 4} paddingTop={theme.size.padding * 4}>
@@ -51,53 +69,91 @@ function Main({navigation}){
                     src={require('../../../assets/icons/default_dp_large.png')}
                 />
                 <View marginLeft={theme.size.margin * 3}>
-                    <Text avarage_sans style={styles.name}>Dr. Sandy Lapuz</Text>
+                    <Text avarage_sans style={styles.name}>{name}</Text>
                     <Text avarage_sans style={styles.specialty}>Dentist (Specialist)</Text>
                 </View>
             </View>
 
-            <View flex={false} row marginTop={theme.size.padding * 4}>
-                <View center middle style={styles.box}>
-                    <Text avarage_sans style={styles.date}>Sunday</Text>
-                </View>
-                <View  center middle style={styles.box}>
-                    <Text avarage_sans style={styles.date}>Monday</Text>
-                </View>
-            </View>
+            <List
+                data={date_available}
+                horizontal
+                style={{
+                    flexGrow:0,
+                    marginTop: theme.size.padding * 4,
+                    width: '100%',
+
+                }}
+                contentContainerStyle={{paddingLeft: date_available.length == 1 ?'25%' : 0}}
+                keyExtractor={(item,index)=>index.toString()}
+                renderItem={({item,index})=>
+                        <View touchable center middle style={ index == dateSelected ? styles.box_select : styles.box}
+                        
+                        press={()=>setDateSelected(index)}
+                        >
+                            <Text avarage_sans style={index == dateSelected ? styles.date_select : styles.date}>{item}</Text>
+                        </View>
+                }   
+            />
 
             <View middle paddingTop={theme.size.padding * 2}>
                 <Text roboto style={{fontSize: 17, marginVertical: theme.size.margin * 5, color:'#2B2B2B'}}>Pick a time</Text>
 
                 <List
-                    data={test_data}
+                    data={time_data}
                     numColumns={3}
+                    showsVerticalScrollIndicator={false}
                     contentContainerStyle={{paddingLeft: 5, paddingTop: 5}}
                     keyExtractor={(item, index)=> index.toString()}
                     renderItem={({item,index})=>
-                    <View flex={false} touchable shadow={title_shadow} center middle style={styles.circle} backgroundColor={item.color}
-                        press={()=>openBottom()}
+                    <View flex={false} touchable shadow={title_shadow} center middle style={styles.circle} 
+                    backgroundColor= {item.availability ? '#1DA6FD': 'white'}
+                        press={()=>openBottom(item)}
                     >
-                        <Text avarage_sans style={{color: item.textColor}}>{item.time}</Text>
-                        <Text avarage_sans style={{color: item.textColor}}>{item.ampm}</Text>
+                        <Text avarage_sans style={{color: item.availability ? 'white': 'black'}}>{moment(item.time, 'HH:mm').format('h:mm')}</Text>
+                        <Text avarage_sans style={{color: item.availability ? 'white': 'black'}}>{moment(item.time, 'HH:mm').format('A')}</Text>
                     </View>
                     }
                 />
             </View>
-            <BottomClick anim={anim} />
+            <BottomClick anim={anim} time_click={time_click} 
+                book_needed={
+                    {
+                        hospital: hospital.id, 
+                        department,
+                        date_available: date_available[dateSelected], 
+                        doc_id: id,
+                    }
+                }
+                    
+            />
         </View>
     )
 }
 
 function BottomClick(props){
-    const { anim } = props
+    const { anim, time_click,book_needed} = props
+    const { hospital, department,date_available, doc_id} = book_needed
+    const [contact, setContact] = useState('')
+    const [name, setName] = useState('')
     
     const closeBottom =()=> {
         Animated.timing(anim,{
-            toValue: height * .55,
+            toValue: theme.size.height * .55,
             duration: 1000,
             easing: Easing.linear,
             useNativeDriver: false,
         }).start();
+    }
+
+    const book =()=> {
+        firebase_time_doctor_add_contact({
+            hospital,
+            department,
+            date_available,
+            doc_id,
+            time_click
+        },{contact,name});
+        closeBottom()
     }
 
     return(
@@ -114,21 +170,33 @@ function BottomClick(props){
                 src={require('../../../assets/icons/down_arrow.png')}/>
             </View>
 
+            <View row center middle flex={false}>
+                <Pic
+                    src={require('../../../assets/icons/clock.png')}
+                    style={{marginRight: theme.size.margin*2}}
+                />
+                <Text avarage_sans fontSize={18} white>The time you picked is {time_click}</Text>
+            </View>
+
             <Input
                     placeholder="Enter your name"
                     style={styles.in_name}
+                    value={name}
+                    onChangeText={text => setName(text)}
                 />
 
             <Input
                 placeholder="Enter your phone number"
                 style={styles.in_phone}
+                value={contact}
+                onChangeText={text => setContact(text)}
             />
             <View row center marginTop={theme.size.margin*7 }> 
             
-                <Button style={styles.cncl_btn}>
+                <Button style={styles.cncl_btn} press={closeBottom}>
                     <Text open_sans style={{fontSize: 18}}>Cancel</Text>
                 </Button>
-                <Button style={styles.book_btn}>
+                <Button style={styles.book_btn} press={book}>
                     <Text open_sans style={{fontSize: 18, fontWeight: 'bold', color: 'white'}}>Book</Text>
                 </Button>
 
@@ -150,6 +218,10 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: '#1DA6FD'
     },
+    date_select:{
+        fontSize: 15,
+        color: 'white'
+    },
     name:{
         fontSize: 18,
     },
@@ -161,6 +233,14 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderColor: '#1DA6FD',
         paddingVertical: 10,
+        width: theme.size.width * .41
+    },
+    box_select:{
+        borderWidth: 0.5,
+        borderColor: '#1DA6FD',
+        backgroundColor:'#1DA6FD',
+        paddingVertical: 10,
+        width: theme.size.width * .41
     },
     circle: {
         height : 83,
@@ -169,8 +249,8 @@ const styles = StyleSheet.create({
     },
     time_click: {
         position: 'absolute',
-        height : height * .55,
-        width,
+        height : theme.size.height * .55,
+        width: theme.size.width,
         backgroundColor: theme.color.accent,
         bottom: 0,
         paddingHorizontal: 40,

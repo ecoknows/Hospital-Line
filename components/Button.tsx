@@ -9,17 +9,18 @@ export default function Main(props : any){
         children,
         animated,
         flex,
+        press,
 
         ...rest
     } = props
 
     const buttonStyle = [
-        style,,
+        style,
         
     ];
 
     return(
-        <TouchableOpacity style={[styles.view,buttonStyle]} {...rest}>
+        <TouchableOpacity style={[styles.view,buttonStyle]} onPress={press} {...rest}>
             {children}
         </TouchableOpacity>
     );

@@ -1,8 +1,10 @@
 import React, { useLayoutEffect} from 'react';
 import { StyleSheet, FlatList} from 'react-native';
-import { Pic, Text, View} from '../components';
+import { Pic, Text, View, Circle, List} from '../components';
 import { BoxShadow } from 'react-native-shadow';
 import { theme } from '../constants';
+import { readable_time } from '../constants/theme';
+import { testkolang } from '../database/Firebase';
 
 const shadowOpt = {
     height: theme.size.height *.2,
@@ -18,44 +20,43 @@ const shadowOpt = {
           justifyContent: 'center',
           alignItems: 'center'}
 }
+
 const options = [
   {title: 'Emergency' , source: require('../assets/images/dashboard/pin.png'), route: 'Emergency' , key:1  },
-  {title: 'Appointment' , source: require('../assets/images/dashboard/calendar.png'), route: 'Appointment' , key: 2 },
+  {title: 'Appointment' , source: require('../assets/images/dashboard/calendar.png'), route: 'AppointmentTopTab' , key: 2 },
   {title: 'Health Tips' , source: require('../assets/images/dashboard/healthcare.png'), route: 'HealthTips' , key: 3 },
   {title: 'Medicine Reminder' , source: require('../assets/images/dashboard/clock.png'), route: 'MedicineReminder' , key: 4},
 ]
+
 export default function DashBoard({navigation}){
 
   return(
-    <View flex={1} style={styles.container}>
-      <Pic src={require('../assets/images/dashboard/Bell.png')} style={styles.bell} touchable press={()=> navigation.navigate('Notifications')}width={30} />
-      <View center middle flexDirection={'row'}flex={1}>
-        <Pic src={require('../assets/images/hospital_line.png')} marginRight={theme.size.margin * 2} width={100}/>            
-        <Text title gray >HOSPITAL <Text title light_blue>LINE</Text></Text>
+  <View flex={1} style={styles.container}>
+    <Pic src={require('../assets/images/dashboard/Bell.png')} style={styles.bell} touchable press={()=> navigation.navigate('Notifications')}width={30} />
+    <View center middle flexDirection={'row'}flex={1}>
+      <Pic src={require('../assets/images/hospital_line.png')} marginRight={theme.size.margin * 2} width={100}/>            
+      <Text title gray >HOSPITAL <Text title light_blue>LINE</Text></Text>
 
-      </View> 
-
-      <View style={styles.dashboard} flex={3} >
-        <FlatList
-          numColumns={2}
-          data={options}
-          renderItem={({item}) => (
-            <View touchable press={()=> navigation.navigate(item.route)} style={styles.dashboard_item} center middle>
-              <View style={styles.inside_item} shadow={shadowOpt} center middle flex={1}>
-                <Pic src={item.source} marginBottom={theme.size.margin * 3} />
-                <Text size={theme.size.normal - 2} gray open_sans center>{item.title}</Text>
-              </View>    
-            </View>
-          )}
-            
-          />
-      </View>    
-
-
-    </View>
-    
-    
-  );
+    </View> 
+    <View style={styles.dashboard} flex={3} >
+      <FlatList
+        numColumns={2}
+        data={options}
+        renderItem={({item}) => (
+          <View touchable press={()=> navigation.navigate(item.route)} style={styles.dashboard_item} center middle>
+            <BoxShadow setting={shadowOpt}>
+            <View style={styles.inside_item}center middle flex={1}>
+              <Pic src={item.source} marginBottom={theme.size.margin * 3} />
+              <Text size={theme.size.normal - 2} gray open_sans center>{item.title} </Text>
+            </View>    
+            </BoxShadow>
+          </View>
+        )}
+        
+        />
+    </View>     
+  </View>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -80,7 +81,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.color.white,
     height: theme.size.normal * 9,
     width: theme.size.normal * 9,
-  }
-
+  },
   
 })

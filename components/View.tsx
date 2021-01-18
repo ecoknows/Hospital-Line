@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { BoxShadow } from 'react-native-shadow';
+import { theme } from '../constants';
 
 export default function Main(props : any){
     
@@ -22,6 +23,8 @@ export default function Main(props : any){
         activeOpacity,
         white,
         scroll,
+        light_blue,
+        absolute,
 
         
 
@@ -30,6 +33,7 @@ export default function Main(props : any){
 
     const viewStyle = [
         style,
+        absolute && {position : 'absolute'},
 
         center && {justifyContent: 'center'},
         middle && {alignItems: 'center'},
@@ -47,7 +51,7 @@ export default function Main(props : any){
         row && {flexDirection: 'row'},
 
         white && styles.white,
-        
+        light_blue && styles.light_blue,
         
     ];
 
@@ -62,6 +66,17 @@ export default function Main(props : any){
             </ScrollView>
         );
     }
+    if(shadow != undefined && animated){
+        
+        return(
+            <BoxShadow setting={shadow}>
+                <Animated.View style={[styles.view,viewStyle]} {...rest}>
+                    {children}
+                </Animated.View>
+            </BoxShadow>
+        )
+    }
+    
 
 
     if(shadow != undefined && !touchable){
@@ -127,5 +142,7 @@ const styles = StyleSheet.create({
     view: {
         flex: 1,
     },
-    white: {backgroundColor: 'white'}
+
+    white: {backgroundColor: 'white'},
+    light_blue : { backgroundColor: theme.color.light_blue},
 });

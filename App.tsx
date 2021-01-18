@@ -5,6 +5,9 @@ import { Map, SplashScreen, Dashboard } from './screens';
 import Navigation from './navigations/Navigation';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
+import { Provider } from 'react-redux';
+import { store } from './brain/redux'
+import { InitializeFirebase,firebase_get_nearest_map_coords } from './database/Firebase';
 
 const  getFonts =()=> Font.loadAsync({
   'Teko' : require('./assets/fonts/Teko-Regular.ttf'),
@@ -20,16 +23,19 @@ export default function Main(){
   const [permission, askForPermission] = Permissions.usePermissions(Permissions.LOCATION, { ask: true });
   const [fontsLoaded, setFontsLoaded] = useState(false);
   useEffect(()=>{
-      
+    InitializeFirebase();
     if (!permission || permission.status !== 'granted') {
       askForPermission(); 
     }
-  });
+  },[]);
+
  
   
   if(fontsLoaded){
     return(
-    <Navigation/>
+    <Provider store={store}>  
+      <Navigation/>
+    </Provider>
     );
   } else {
     

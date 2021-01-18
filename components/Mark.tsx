@@ -1,33 +1,62 @@
 import React from "react";
-import { View, Image, Text, Animated } from "react-native";
+import { Image, StyleSheet, Animated } from "react-native";
 import { Callout, Marker } from "react-native-maps";
-import API from "../brain/API";
+import Pic from './Pic';
+import View from './View';
+import {api} from "../brain";
+import { theme } from "../constants";
+import Circle from './Circle';
+import Text from './Text';
 
 
 
+const markShadow = {
+  height: theme.size.height *.04,
+  width: theme.size.width * .1,
+  color:"#000",
+  border: 15,
+  radius: 14,
+  opacity:0.15,
+  x: 11.5,
+  y: 24.5,
+  style:{ alignSelf: 'center', marginRight: 20, marginTop: 15}
+}
+
+const practiceShadow = {
+  height: theme.size.height *.137,
+  width: theme.size.width * .44,
+  color:"#000",
+  border:5,
+  radius: 16,
+  opacity:0.15,
+  x: 3,
+  y: 3,
+  style:{ alignSelf: 'center'}
+}
 export default function Main(props : any){
     
     const {
       coordinate, 
       userPosition,
-      setRoute,
-      children,
+      state,
+      latest_coords,
       image, 
-      percentage, 
       imageStyle, 
-      animated,
       user,
       viewStyle,
       rootViewStyle, 
-      percentageStyle} = props;
+      distance,
+      availability,
+    } = props;
 
     if(user){
       return(
         <Marker
         coordinate={coordinate}
-        onPress={()=>marker_on_press(coordinate,setRoute, userPosition)}
+        anchor={{ x: 0.5, y: .6 }}
+        onPress={()=>marker_on_press(coordinate,state, userPosition)}
         >
-        <Animated.View style={rootViewStyle}>
+           <Animated.View style={rootViewStyle} >
 
          <Animated.View style={viewStyle}>
             <Image source={image}
@@ -35,38 +64,73 @@ export default function Main(props : any){
                     resizeMode: 'contain',
                     width: 50,
                     height: 50,
-                    top: -10,
                   },imageStyle]}/>
             </Animated.View>
         </Animated.View>
         </Marker>
       )
     }else{
+      let stat = 'Full';
+      let stat_color = 'red';
+      if(availability == 1){
+        stat = 'Available';
+        stat_color = '#07FF4C';
+      }else if (availability == 2){
+        stat_color = '#F3AF00';
+        stat = 'Available';
+      }
       return(
           <Marker
           coordinate={coordinate}
-          onPress={()=>marker_on_press(coordinate,setRoute, userPosition)}
+          anchor={{ x: 0.5, y: 0.96 }}
+          style={{height: theme.size.height *.25,
+            paddingLeft: 6,
+          width: theme.size.width * .5}}
+          onPress={()=>{ 
+            latest_coords.longitude = coordinate.longitude;
+            latest_coords.latitude = coordinate.latitude;
+            marker_on_press(coordinate,state, userPosition)}}
           >
-  
-          
-               <Animated.View style={[{flex: 1, zIndex:1},viewStyle]}>
-                <Animated.Image source={image}
-                  style={[{
-                    resizeMode: 'contain',
-                    width: 40,
-                    height: 40,
-                    margin: 10,
-                  },imageStyle]}
-                />
-                <Text style={[{color: '#808080', position: "absolute", left: 23, top: 18, fontSize: 10},percentageStyle]}>{percentage}</Text>
-              </Animated.View>
-      
-              <Callout>
-                <View>
-                  {children}
+             <View shadow={practiceShadow}>
+              <View style={styles.callout}>
+                <View flex={false} row marginLeft={theme.size.padding+4} marginBottom={theme.size.margin*2}>
+                  <Circle backgroundColor={stat_color} round={10} alignSelf='center' marginRight={theme.size.margin} />
+                  <Text roboto size={15}>{stat}</Text>
                 </View>
-              </Callout>
-              
+                <View flex={false} row  marginLeft={theme.size.padding+4} marginBottom={theme.size.margin*2}>
+                  <Pic 
+                    src={require('../assets/icons/km.png')}
+                    style={{alignSelf:'center',marginRight:theme.size.margin}}
+                  />
+                  <Text roboto color='#817F7F' size={15}>{distance}</Text>
+                </View>
+                <View borderColor='#E6E6E7' borderTopWidth={1}>
+                  <View flex={false} row center middle paddingTop={5}marginBottom={theme.size.margin*2}>
+                    <Pic 
+                      src={require('../assets/icons/compass.png')}
+                      style={{alignSelf:'center',marginRight:theme.size.margin}}
+                    />
+                    <Text roboto color='#053E92' size={16}>Get Directions</Text>
+                  </View>
+                </View>
+                <Pic
+                  src={require('../assets/icons/arr_indicator.png')}
+                  style={{position:'absolute', bottom: -20, alignSelf:'center'}}
+                />
+            </View>
+
+         </View>
+                <View shadow={markShadow} flex={false}>
+                    <Pic 
+                        src={require('../assets/testing/lukes.jpg')}
+                        style={styles.image}
+                    />  
+                    <Pic 
+                        src={require('../assets/icons/open.png')}
+                        style={styles.icon}
+                    />
+                   <View flex={false} style={styles.triangle}/>
+                </View>
           </Marker>
       )
     }
@@ -76,11 +140,77 @@ export default function Main(props : any){
 
 }
 
-function marker_on_press(coordinate : any,setRoute : any, userPosition : {longitude: number, latitude: number}){
-    API.route((result: [])=>{
-        setRoute(result);
-      },{ 
-      fromCoordinates : {longitude: userPosition.longitude, latitude: userPosition.latitude}, 
-      toCoordinates : {longitude: coordinate.longitude, latitude:coordinate.latitude} 
+function marker_on_press(coordinate : any,state : any, userPosition : {longitude: number, latitude: number}){
+   const {setDirection } = state;
+
+  interface RoutesInterface{
+    total_distance: number,
+    duration: number,
+    steps: {latitude: number, longitude: number}[],
+    maneuver: {
+      type: string,
+      modifier: string,
+      distance: number,
+    }[],
+  }
+  
+  api.route_car((result: RoutesInterface)=>{
+    setDirection({
+      steps: result.steps,
+      total_distance: result.total_distance,
+      duration: result.duration,
+      maneuver: result.maneuver,
     })
+    },{ 
+    fromCoordinates : {longitude: userPosition.longitude, latitude: userPosition.latitude}, 
+    toCoordinates : {longitude: coordinate.longitude, latitude:coordinate.latitude} 
+  })
 }
+
+const styles = StyleSheet.create({
+ 
+  image: {
+    width: '162%',
+    height: '140%',
+    borderRadius: 600,
+    borderWidth: 5.6,
+    transform: [{ scaleX: 1.15 }],
+    borderColor: 'white',
+    resizeMode: 'cover'
+  },
+  icon:{
+    position: 'absolute',
+    bottom: -17,
+    right: -21,
+  },
+  triangle: {
+    position: 'absolute',
+    bottom: -25,
+    left: 25,
+    width: 0,
+    height: 0,
+    backgroundColor: "transparent",
+    borderStyle: "solid",
+    borderLeftWidth: 5,
+    borderRightWidth: 5,
+    borderBottomWidth: 10,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "white",
+    transform: [{ rotate: "180deg" }],
+  },
+  check:{
+    position: 'absolute',
+    width: 15,
+    height: 15,
+    borderRadius: 15/2,
+    backgroundColor:'#00C637'
+  },
+  callout:{
+    paddingVertical:theme.size.padding+4,
+    height: '100%',
+    width: '104%',
+    borderRadius: 20,
+    backgroundColor: 'white'
+  }
+});
