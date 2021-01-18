@@ -11,6 +11,9 @@ import { updateCliniclDepartment, updateHospitalDepartment } from '../../../brai
 
 
 const appointment = createMaterialTopTabNavigator();
+let placeholder_hospital = "Search for Hospital"
+let placeholder_clinic = "Search for Clinic"
+let status = true;
 
 const Main = ({navigation}) => {
   
@@ -37,12 +40,12 @@ const Main = ({navigation}) => {
     style: {position:'absolute', alignSelf: 'center', zIndex: 1, marginTop: theme.size.height * .055}
   }
 
-  const [ department, setDepartment] = useState(null);
-  const [ seach, setSearch ] = useState(false);
-  const [data, setData] = useState([]);
-  const [ status, setStatus ] = useState("Hospitals");
 
+  const [ seach, setSearch ] = useState(false);
+  const [ data, setData] = useState([]);
+  const [ refresh, setRefresh ] = useState(true);
   const dispatch = useDispatch();
+  
 
   useEffect(()=>{
     const keyboardListenerHide = Keyboard.addListener('keyboardDidHide', ()=>{
@@ -62,13 +65,14 @@ const Main = ({navigation}) => {
                 <View touchable style={{flex:1, paddingVertical: 5, zIndex:100}} middle press={()=>{
                   
                    setSearch(false);
-                   setDepartment(item);
-                   console.log(item , ' etaes');
-                   
-                   if(status == 'Hospitals')
+                   if(status){
+                     placeholder_hospital = item.name
                     dispatch(updateHospitalDepartment(item))
-                   else
+                   }
+                   else{
+                    placeholder_clinic = item.name
                     dispatch(updateCliniclDepartment(item))
+                   }
                 }}>  
                   <Text avarage_sans gray size={18} >{item.name}</Text>
                 </View>
@@ -88,16 +92,21 @@ const Main = ({navigation}) => {
               <View shadow={box_shadow} flex={false} >  
               <View row white middle center flex={false}  style={styles.input_view}>
                     <Input
-                              placeholder={ department != null ? department.name : 'Search for '+ status}
+                              placeholder={ status ? placeholder_hospital : placeholder_clinic}
                               autoFocus={true}
                               placeholderStyle={{fontFamily: theme.font.AVARAGE_SANS_REGULAR, fontSize: 20}}
                               style={[styles.input, {width: '100%',}]}
                               onChangeText={text => {
-                                firebase_search(status,text.toLowerCase()).then((data: any)=>{
+                                console.log(text.toLowerCase());
+                                
+                                firebase_search(status ? 'Hospitals' : 'Clinics',text.toLowerCase()).then((data: any)=>{
                                     setData(data)
-                                    if(data.length != 0)
+                                    console.log(data);
+                                    if(data == undefined)
+                                      setSearch(false)
+                                    else if(data.length != 0)
                                       setSearch(true);
-                                    if(data.length == 0)
+                                    else if(data.length == 0)
                                       setSearch(false);
                                     
                                 })
@@ -128,7 +137,10 @@ const Main = ({navigation}) => {
                 component={Hospital}
                 listeners={{
                   blur: e => {
-                    setStatus('Clinics')
+                    if(status){
+                      status = false
+                      setRefresh(status)
+                    }
                   }
                   }}
                 />
@@ -136,8 +148,10 @@ const Main = ({navigation}) => {
                   
                   listeners={{
                   blur: e => {
-                    setStatus('Hospitals')
-                      
+                    if(!status){
+                      status = true
+                      setRefresh(status)
+                    }
                   }
                   }}/>
               </appointment.Navigator>

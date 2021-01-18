@@ -87,14 +87,11 @@ export async function firebase_get_doctors(item){
   return data.docs.map(doc => {return { id : doc.id, ...doc.data()}});
     }catch{
 
-    }
+    }   
 }
-
 
 export async function firebase_search(collection,text){
     try{
-        console.log(text == '');
-        text = text == '' ? '.' : text;
       const data = await firebase.firestore()
             .collection(collection)
             .orderBy("search")

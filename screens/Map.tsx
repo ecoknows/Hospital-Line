@@ -6,7 +6,7 @@ import {Mark, AnimatedLine, Text, View, Pic, List} from '../components';
 import {theme} from '../constants';
 import { firebase_get_nearest_map_coords } from "../database/Firebase";
 import moment from 'moment';
-import { readable_time } from "../constants/theme";
+import { direct_images, direct_text, readable_time } from "../constants/theme";
 
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = theme.size.width * 0.8;
@@ -160,7 +160,9 @@ function ShowDirection(props){
     duration: number,
     steps: {latitude: number, longitude: number}[],
     maneuver: {
+      name: string,
       type: string,
+      bearing_after: number,
       modifier: string,
       distance: number,
     }[],
@@ -168,7 +170,7 @@ function ShowDirection(props){
 
   const TopViewItem =(props)=>{
     const{ item, index} = props;
-    const { type, modifier, distance } = item;
+    const { name, type, bearing_after, modifier, distance } = item;
     /*
     [
                   {direction: 'Head east onto Sto. Nino St', image: require('../assets/direction_icons/east.png'), distance: '20 km'},
@@ -178,10 +180,11 @@ function ShowDirection(props){
     return(
       <View row middle center>
         <Pic
-          src={require('../assets/direction_icons/east.png')}
-          marginRight={theme.size.margin * 2}
+          src={direct_images(type,bearing_after,modifier)}
+          style={{height: 15, width: 15}}
+          resizeMode='contain'
         />
-        <Text roboto size={ index == 0 ? 15 : 13} color={ index != 0 ? '#9F9F9F' : '#343434'}>{modifier}</Text>
+        <Text roboto size={ index == 0 ? 16 : 15} color={ index != 0 ? '#9F9F9F' : '#343434'}>{direct_text(name,type,modifier, bearing_after)}</Text>
         <Text roboto size={12} color='#6473FF'>  {distance} m</Text>
       </View>
     )
@@ -258,6 +261,9 @@ function ShowDirection(props){
             
           </View>
       </View>
+      
+      
+      
       <View flex={false} row style={{alignSelf: 'flex-start', marginLeft: theme.size.margin * 4, marginTop: theme.size.margin*2}}>
         <View flex={false} center middle touchable style={{height: 50, width: 50, backgroundColor:select == 0 ? '#678FF5': 'white', borderRadius: 10, marginRight: 8}}
            press={()=>setSelect(0)}

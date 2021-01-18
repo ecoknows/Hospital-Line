@@ -14,7 +14,9 @@ interface RoutesInterface{
   duration: number,
   steps: {latitude: number, longitude: number}[],
   maneuver: {
+    name: string,
     type: string,
+    bearing_after: number,
     modifier: string,
     distance: number,
   }[]
@@ -40,7 +42,9 @@ export function route_car(func : any ,{ fromCoordinates, toCoordinates } : route
         
             for(let i = 0; i < json.routes[0].legs[0].steps.length; i++){
               result.maneuver.push({
+                name: json.routes[0].legs[0].steps[i].name,
                 type: json.routes[0].legs[0].steps[i].maneuver.type,
+                bearing_after: json.routes[0].legs[0].steps[i].maneuver.bearing_after,
                 modifier: json.routes[0].legs[0].steps[i].maneuver.modifier,
                 distance: json.routes[0].legs[0].steps[i].distance,
               })
@@ -77,7 +81,9 @@ export function route_bike(func : any ,{ fromCoordinates, toCoordinates } : rout
       
           for(let i = 0; i < json.routes[0].legs[0].steps.length; i++){
             result.maneuver.push({
+              name: json.routes[0].legs[0].steps[i].name,
               type: json.routes[0].legs[0].steps[i].maneuver.type,
+              bearing_after: json.routes[0].legs[0].steps[i].maneuver.bearing_after,
               modifier: json.routes[0].legs[0].steps[i].maneuver.modifier,
               distance: json.routes[0].legs[0].steps[i].distance,
             })
@@ -114,7 +120,9 @@ export function route_foot(func : any ,{ fromCoordinates, toCoordinates } : rout
       
           for(let i = 0; i < json.routes[0].legs[0].steps.length; i++){
             result.maneuver.push({
+              name: json.routes[0].legs[0].steps[i].name,
               type: json.routes[0].legs[0].steps[i].maneuver.type,
+              bearing_after: json.routes[0].legs[0].steps[i].maneuver.bearing_after,
               modifier: json.routes[0].legs[0].steps[i].maneuver.modifier,
               distance: json.routes[0].legs[0].steps[i].distance,
             })

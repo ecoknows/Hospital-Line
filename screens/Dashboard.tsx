@@ -4,6 +4,7 @@ import { Pic, Text, View, Circle, List} from '../components';
 import { BoxShadow } from 'react-native-shadow';
 import { theme } from '../constants';
 import { readable_time } from '../constants/theme';
+import { testkolang } from '../database/Firebase';
 
 const shadowOpt = {
     height: theme.size.height *.2,
@@ -28,7 +29,6 @@ const options = [
 ]
 
 export default function DashBoard({navigation}){
-
 
   return(
   <View flex={1} style={styles.container}>

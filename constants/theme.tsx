@@ -226,11 +226,11 @@ export const departments : departments_interface[]=[
     },
     {
         image: require('../assets/icons/cake.png'),
-        title: 'cake',
+        title: 'Dermitology',
     },
     {
         image: require('../assets/icons/heart.png'),
-        title: 'heart',
+        title: 'Cardiology',
     },
 ];
 
@@ -355,11 +355,79 @@ export function readable_time(seconds : number){
 
   
   if(Math.trunc(seconds / 60)  <= 1){
-    result += Math.trunc(seconds) + ' second'
+    result += Math.trunc(seconds) + ' seconds'
   }
  
-  console.log(result);
   return result;
+}
+
+export const direct_images =(type,bearing_after,modifier)=>{
+  if(type == 'arrive')
+    return require('../assets/direction_icons/destination.png')
+  if(type == 'depart'){
+    switch(getCardinal(bearing_after)){
+      case 'north': return require('../assets/direction_icons/north.png')
+      case 'northeast': return require('../assets/direction_icons/northeast.png')
+      case 'northwest': return require('../assets/direction_icons/northwest.png')
+      case 'east': return require('../assets/direction_icons/east.png')
+      case 'west': return require('../assets/direction_icons/west.png')
+      case 'south': return require('../assets/direction_icons/south.png')
+      case 'southeast': return require('../assets/direction_icons/southeast.png')
+      case 'southwest': return require('../assets/direction_icons/southwest.png')
+    }
+  }
+
+  switch(modifier){
+    case 'right': return require('../assets/direction_icons/right.png')
+    case 'left': return require('../assets/direction_icons/left.png')
+    case 'straight': return require('../assets/direction_icons/straight.png')
+    case 'slight right': return require('../assets/direction_icons/slight_right.png')
+    case 'slight left': return require('../assets/direction_icons/slight_left.png')
+  }
+}
+
+export const direct_text =(name,type,modifier, bearing_after)=>{
+  console.log(bearing_after , type , getCardinal(bearing_after));
+  
+  if (type == 'depart')
+    return ' Head ' + getCardinal(bearing_after) +' ' + name;
+  if (type == 'arrive'){
+    modifier = modifier == undefined ? '' : ' on the ' + modifier
+    return ' You have arrive at your destination, ' + modifier;
+  }
+  if(modifier == 'straight')
+    return ' Continue onto '+name;
+  if(modifier == 'left' || modifier == 'right')
+    return ' Turn '+ modifier +' onto '+name;
+  if(modifier == 'slight right' || modifier == 'slight left')
+    return ' Make a '+ modifier +' onto '+name;
+  if((modifier == 'slight right' || modifier == 'slight left') && type == 'continue')
+    return ' Make a '+ modifier +' to stay on '+name;
+    
+  }
+
+  
+export function getCardinal(angle) {
+  /** 
+   * Customize by changing the number of directions you have
+   * We have 8
+   */
+  const degreePerDirection = 360 / 8;
+
+  /** 
+   * Offset the angle by half of the degrees per direction
+   * Example: in 4 direction system North (320-45) becomes (0-90)
+   */
+  const offsetAngle = angle + degreePerDirection / 2;
+
+  return (offsetAngle >= 0 * degreePerDirection && offsetAngle < 1 * degreePerDirection) ? "north"
+    : (offsetAngle >= 1 * degreePerDirection && offsetAngle < 2 * degreePerDirection) ? "northeast"
+      : (offsetAngle >= 2 * degreePerDirection && offsetAngle < 3 * degreePerDirection) ? "east"
+        : (offsetAngle >= 3 * degreePerDirection && offsetAngle < 4 * degreePerDirection) ? "southeast"
+          : (offsetAngle >= 4 * degreePerDirection && offsetAngle < 5 * degreePerDirection) ? "south"
+            : (offsetAngle >= 5 * degreePerDirection && offsetAngle < 6 * degreePerDirection) ? "southwest"
+              : (offsetAngle >= 6 * degreePerDirection && offsetAngle < 7 * degreePerDirection) ? "west"
+                : "northwest"; 
 }
 
 export const home_style =  {
